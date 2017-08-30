@@ -1,0 +1,11 @@
+apt: updating and installing packages
+dpkg: installing .deb files
+cd: changing directories
+ls: listing files and subdirectories
+ssh: secure shell for accessing remote servers
+git clone: cloning remote repository 
+mv: moving or renaming files or directories
+git add: adding files to version control
+git status: check which files are under version control and have been modified
+git commit: commit changes to select files for version control
+git push: push changes to git server
