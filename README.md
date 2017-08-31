@@ -3,9 +3,9 @@
 ### What is this repository for? ###
 
 * Homeworks
-* Projects
 * Code
 * Notes
+* Todo lists
 
 ### Directory Description ###
 * `hwk` Contains solutions to homework assignments
