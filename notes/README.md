@@ -1,1 +1,3 @@
-This directory will be used to save my important notes
+# Alexander Durbin (ajd2@vt.edu) Notes Repository #
+
+For saving important notes.
