@@ -11,3 +11,26 @@ git commit: commit changes to select files for version control
 git push: push changes to git server
 mkdir: create directories
 rmdir: remove directories
+history: lists previous commands
+!#: runs command # from history
+man "command": brings up manual page for "command"
+more "file": displays contents of "file" one page at a time, can scroll down but not up
+less "file": displays contents of "file" one page at a time with continuous scrolling
+cat: prints contents of file to the console
+head: displays first 10 lines of file, number of displayed lines tuneable
+tail: displays last 10 lines of file, number of displayed lines tuneable
+ps -u "user": displays all running processes for "user"
+kill id#: kills running process where id# comes from ps
+killall "name": kills running process by name
+grep "string" unix.txt: searches unix.txt and prints lines containing "string" to console
+find -name file: searches for file and prints the full path to the console
+command &: runs the command in the background - useful for opening program or running script but still want to use the console
+l, l\s: shorthand command for ls, prints directory contents to console
+cp location1/file location2/file: copies file from location 1 to location 2
+evince file: opens file in the GNOME document viewer
+command1 | command2: pipe operator takes the output from one command as the input for the second command
+alias shortcut=reallyLongCommand: aliasing makes shortcut the equivalent command to reallyLongCommand
+Rscript -e expression: Executes expression in the R console
+R CMD BATCH argument: Alternative to Rscript for executing R commands or sourcing files
+chmod: Makes shell scripts executables, useful for making Bash scripts or con jobs. Also can change file permissions and ownership.
+crontab -e: Scheduled execution of programs or shell scripts, hourly, daily, etc.

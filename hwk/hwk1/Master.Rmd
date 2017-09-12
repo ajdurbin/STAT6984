@@ -3,10 +3,10 @@ title: "Homework 1"
 author: "Alexander Durbin"
 date: "August 30, 2017"
 output: 
-    html_document:
+    pdf_document:
         fig_caption: TRUE
-        # fig_width: 3
-        # fig_height: 2
+        fig_width: 3
+        fig_height: 2
 ---
 
 # Problem 3
