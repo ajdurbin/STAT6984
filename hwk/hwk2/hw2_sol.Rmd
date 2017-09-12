@@ -16,11 +16,11 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 
 ```{r}
 swap <- function(v, i, j) 
-  { 
+{ 
 	tmp <- v[i]
 	v[i] <- v[j]
 	v[j] <- tmp 
-  }
+}
 ``` 
 
 *A disadvantage of this implementation is that it copies the entire vector, `v`, in order to work with just two of its elements.  Consider the following example.*
@@ -36,6 +36,7 @@ The following code uses `proc.time()` to get the current CPU time, does the swap
 
 ```{r, eval=TRUE, echo=TRUE}
 
+v <- 1:1000000000
 begin <- proc.time()
 tmp <- v[1]
 v[1] <- v[2]
@@ -49,6 +50,26 @@ print(elapsed)
 So we see that the function definition is faster than manually swapping the elements. This is counter-intuitive because I would think that the copy process would take additional computational time then direct calculation.
 
 *Write a new version of the `swap` function, called `swap.eval`, which uses `quote` and `eval` to perform the calculation just like in part a. but within the function environment and without copying `v` by working on `v` in the `parent.frame`.  Although this is a toy example, a similar code might be useful if, say, indicies `i` and `j` required substantial pre-calculation within the function before the swap occurred.  Demonstrate your `swap.eval` with `i=1; j=2` and report on the time.*
+
+The followinig code defines `swap.eval`, we run this using `system.time()` as above.
+
+```{r, eval=TRUE, echo=TRUE}
+
+v <- 1:1000000000
+
+swap.eval <- function(v, i, j)
+{
+  eval(quote(v), envir=parent.frame())
+  tmp <- v[i]
+  v[i] <- v[j]
+  v[j] <- tmp
+}
+
+system.time(swap.eval(v, i = 1, j = 2))
+
+```
+
+We see that `swap.eval` is an improvement over `swap`. 
 
 *Write a similar function named `swap.do` which can be called via `do.call` that similarly accesses `v` without copying it.  Add a `print` statement at the end of `swap.do` to show the first five elements of `v` after the swap occurs.  Demonstrate `swap.do` with `i=1; j=2` and report on the time.  Are there any disadvantages to `swap.do` compared to `swap.eval`?*
 
