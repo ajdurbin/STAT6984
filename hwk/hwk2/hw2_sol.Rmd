@@ -6,6 +6,10 @@ output: html_document
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
+```
+
 ### Problem 1: Unix commands (15 pts)
 
 *Update your `asc-repo/notes/unix.txt` file to include the commands we have discussed in class since homework 1, and any others that you'd like to keep a list of.  (Note that the answer to this question does not require files in `asc-repo/hw2`.)*
@@ -72,6 +76,30 @@ system.time(swap.eval(v, i = 1, j = 2))
 We see that `swap.eval` is an improvement over `swap`. 
 
 *Write a similar function named `swap.do` which can be called via `do.call` that similarly accesses `v` without copying it.  Add a `print` statement at the end of `swap.do` to show the first five elements of `v` after the swap occurs.  Demonstrate `swap.do` with `i=1; j=2` and report on the time.  Are there any disadvantages to `swap.do` compared to `swap.eval`?*
+
+The following code contains `swap.do` definition and its accompanying output with `system.time`.
+
+```{r, eval=TRUE, echo=TRUE}
+
+v <- 1:1000000000
+
+swap.do <- function(v, i, j) 
+{ 
+  tmp <- v[i]
+  v[i] <- v[j]
+  v[j] <- tmp 
+  print(v[1:5])
+}
+
+system.time(
+  do.call(
+    swap.do, args = list(v, 1, 2), quote = TRUE, envir = parent.frame()
+  )
+)
+
+```
+
+We see that `swap.do` is slightly less efficient than `swap.eval` but still has significantly better performance than manual entry or `swap`.
 
 
 ### Problem 3: Bisection broadening (30 pts)
