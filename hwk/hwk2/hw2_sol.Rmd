@@ -36,18 +36,16 @@ system.time(swap(v, i=1, j=2))
 
 *Report on how much time it takes to swap two elements (`i=1; j=2`) dircetly on the command line, i.e., without wrapping in a function.*
 
-The following code uses `proc.time()` to get the current CPU time, does the swap manually, and then again uses `proc.time()` to calculate the difference between the calls. 
+The following code uses `system.time()` to get the manual implimentation time.
 
 ```{r, eval=TRUE, echo=TRUE}
 
 v <- 1:1000000000
-begin <- proc.time()
-tmp <- v[1]
-v[1] <- v[2]
-v[2] <- tmp
-end <- proc.time()
-elapsed <- end - begin
-print(elapsed)
+system.time({
+  tmp <- v[1]
+  v[1] <- v[2]
+  v[2] <- tmp
+})
 
 ```
 

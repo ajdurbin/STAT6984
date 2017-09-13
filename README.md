@@ -10,3 +10,4 @@
 ### Directory Description ###
 * `hwk` Contains solutions to homework assignments
 * `notes` Contains important notes
+* `Testing` Contains miscellanous scripts not necessarily for homework
