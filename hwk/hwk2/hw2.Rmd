@@ -1,0 +1,18 @@
+---
+title: 'STAT6984: Homework 2'
+author: "Alexander Durbin"
+date: "September 13, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 4
+
+- R CMD BATCH
+    - Called with `R CMD BATCH [options] input_file output_file args`
+    - By default produces a `.Rout` file with same name as `input_file`.
+    - `.Rout` contains the input and output of running the commands in `input_file` in the `R` console.
+    - Plots specified in `input_file` are placed in `Rplots.pdf` on separate pages.
