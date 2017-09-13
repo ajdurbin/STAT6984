@@ -18,7 +18,23 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > x <- 1:10
+> library(tidyverse)
+Loading tidyverse: ggplot2
+Loading tidyverse: tibble
+Loading tidyverse: tidyr
+Loading tidyverse: readr
+Loading tidyverse: purrr
+Loading tidyverse: dplyr
+Conflicts with tidy packages ---------------------------------------------------
+filter(): dplyr, stats
+lag():    dplyr, stats
 > y <- 11:20
+> 
+> 
+> testit <- function() warning('testit')
+> testit()
+Warning message:
+In testit() : testit
 > 
 > print(x)
  [1]  1  2  3  4  5  6  7  8  9 10
