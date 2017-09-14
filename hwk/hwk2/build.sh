@@ -1,3 +1,3 @@
 #!/bin/bash
 
-Rscript -e "knitr::knit('hw2.Rmd', tangle = TRUE)"
+Rscript -e "knitr::knit('hw2_sol.Rmd', tangle = TRUE)"
