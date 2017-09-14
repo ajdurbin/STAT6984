@@ -10,11 +10,6 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
-### Problem 1: Unix commands (15 pts)
-put all of the commands in quote and then eval in parent frame in swap.eval
-do multiple times and save the times
-*Update your `asc-repo/notes/unix.txt` file to include the commands we have discussed in class since homework 1, and any others that you'd like to keep a list of.  (Note that the answer to this question does not require files in `asc-repo/hw2`.)*
-
 ### Problem 2: Immutable objects (30 pts)
 
 *Consider the following function which swaps elements `i` and `j` of a vector `v`.*
@@ -31,7 +26,8 @@ swap <- function(v, i, j)
 *A disadvantage of this implementation is that it copies the entire vector, `v`, in order to work with just two of its elements.  Consider the following example.*
 
 ```{r}
-v <- 1:100000000
+v <- 1:1000000000
+system.time(swap(v, i=1, j=2))
 system.time(swap(v, i=1, j=2))
 ``` 
 
@@ -41,17 +37,21 @@ The following code uses `system.time()` to get the manual implimentation time.
 
 ```{r, eval=TRUE, echo=TRUE}
 
-v <- 1:100000000
+v <- 1:1000000000
 system.time({
   tmp <- v[1]
   v[1] <- v[2]
   v[2] <- tmp
 })
-# nohup
+
+system.time({
+  tmp <- v[1]
+  v[1] <- v[2]
+  v[2] <- tmp
+}) 
+
 # export uses this destination for another command they're just destination
 # env bash command
-# last 3 weeks of class group topic presentation
-# dotc versus .cpp
 
 ```
 
@@ -63,7 +63,7 @@ The followinig code defines `swap.eval`, we run this using `system.time()` as ab
 
 ```{r, eval=TRUE, echo=TRUE}
 
-v <- 1:100000000
+v <- 1:1000000000
 i <- 1
 j <- 2
 
@@ -76,7 +76,7 @@ swap.eval <- function(v, i, j)
 }
 
 system.time(swap.eval(v, i = i, j = j))
-print(v[1:5])
+system.time(swap.eval(v, i = i, j = j))
 ```
 
 We see that `swap.eval` is an improvement over `swap`. 
@@ -87,7 +87,7 @@ The following code contains `swap.do` definition and its accompanying output wit
 
 ```{r, eval=TRUE, echo=TRUE}
 
-v <- 1:100000000
+v <- 1:1000000000
 
 swap.do <- function(v, i, j) 
 { 
@@ -96,6 +96,15 @@ swap.do <- function(v, i, j)
   v[j] <- tmp 
   print(v[1:5])
 }
+
+system.time(
+  do.call(
+    swap.do,
+    args = list(v, 1, 2),
+    quote = TRUE,
+    envir = parent.frame()
+  )
+)
 
 system.time(
   do.call(
