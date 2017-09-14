@@ -34,3 +34,8 @@ Rscript -e expression: Executes expression in the R console
 R CMD BATCH argument: Alternative to Rscript for executing R commands or sourcing files
 chmod: Makes shell scripts executables, useful for making Bash scripts or con jobs. Also can change file permissions and ownership.
 crontab -e: Scheduled execution of programs or shell scripts, hourly, daily, etc.
+echo: Write a string to a file or to the console
+env: Shows system information such as user, current working directory, language, session, desktop manager, window manager, etc
+!str: Runs the lastest command that started with str
+git log: produces git commit messages and dates beginning with most recent
+pdflatex: Used for compiling .tex files
