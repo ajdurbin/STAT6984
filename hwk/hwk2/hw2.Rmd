@@ -10,8 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Problem 4
-## NOT GETTING .RDATA FILES IN COMMAND LINE BUT SHOULD BE
+## NOT GETTING .RDATA FILES IN COMMAND LINE BUT SHOULD BE AND WHAT ABOUT DEFAULT ARGUMENTS CONTRASTS
 
+### R Command Line Tools
 - R CMD BATCH
     - Called with `R CMD BATCH [options] input_file output_file args`
     - By default produces a `.Rout` file with same name as `input_file`.
@@ -29,3 +30,19 @@ knitr::opts_chunk$set(echo = TRUE)
     - Also prints plots from `file` on separate pages to `Rplots.pdf`.
     - `args` are similarly used as in `R CMD BATCH` with the appropriate `commandArgs(TRUE)` statement.
     - Does not write to `.Rout` file by default or have options to. If wanting to capture the console output, will need to explicitly write to a file or use log files.
+    - Can run single line expressions using `Rscript -e command`.
+    - DOES THIS LOAD .RDATA BY DEFAULT?
+    
+The major difference between these two command line tools is console output. `Rscript` seems more useful for doing quick commands in a remote server whereas `R CMD BATCH` would be more useful for running large programs on a remote server. However, `Rscript` does print warnings and errors and that is incredibly useful when running large jobs, but when combined with log files this could be the superior option.
+
+### Compiling `.Rmd` Files
+
+Assuming the user is in the directory containing the relevant files, the command to compile `.Rmd` files with accompanying `.R` file is
+
+```{r, eval=FALSE}
+
+knitr::knit(input = my_file, tangle = TRUE)
+
+```
+
+The `tangle = TRUE` argument will extract code chunks from the `.Rmd` file and place them in a `.R` file with the same name as `my_file` except if `output_file` was specified for `output` in `knit`.
