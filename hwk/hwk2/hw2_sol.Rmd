@@ -1,5 +1,6 @@
 ---
-title: 'STAT6984: Homework 2'
+title: 'Homework 2'
+subtitle: 'STAT6984: Advanced Statistical Computing'
 author: "Alexander Durbin"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
@@ -108,7 +109,7 @@ system.time(
 
 ```
 
-Surprisingly `swap.do` is just as inefficient as `swap`. This is surprising as the `quote` and `environment` options in `do.call` would lead us to believe that there would be no copying involved. This must not be the case.
+Surprisingly `swap.do` is just as inefficient as `swap`. This is surprising as the `quote` and `environment` options in `do.call` would lead us to believe that there would be no copying involved. This must not be the case. Additionally, `swap.do` does not actually modify `v` either, this is seen in the consecutive `do.call` statements. Our previous swap functions modified `v` itself, whereas we created a new object here. This may or may not be what we want depending on the situation.
 
 # Problem 4
 
