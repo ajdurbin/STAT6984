@@ -39,3 +39,7 @@ env: Shows system information such as user, current working directory, language,
 !str: Runs the lastest command that started with str
 git log: produces git commit messages and dates beginning with most recent
 pdflatex: Used for compiling .tex files
+clear: clear terminal 
+top: lists running process
+htop: more advanced top, opened in less mode and color coded
+
