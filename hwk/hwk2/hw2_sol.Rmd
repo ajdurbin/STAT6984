@@ -33,8 +33,6 @@ The following code is replicates switching the first and second elements of `v` 
 ```{r, eval=TRUE, echo=TRUE}
 
 v <- 1:1000000000
-i <- 1
-j <- 2
 
 system.time({
   tmp <- v[1]
@@ -48,8 +46,6 @@ system.time({
   v[2] <- tmp
 }) 
 
-# export uses this destination for another command they're just destination
-# env bash command
 
 ```
 
@@ -60,8 +56,10 @@ The following code is our implimentation of `swap.eval` using `quote` and `eval`
 ```{r, eval=TRUE, echo=TRUE}
 
 v <- 1:1000000000
+i <- 1
+j <- 2
 
-swap.eval <- function(v, i, j)
+swap.eval <- function(v,...)
 {
   eval(
     quote({tmp <- v[i]; v[i] <- v[j]; v[j] <- tmp}), 
@@ -69,9 +67,9 @@ swap.eval <- function(v, i, j)
     )
 }
 
-system.time(swap.eval(v, i = i, j = j))
+system.time(swap.eval(v, i, j))
 
-system.time(swap.eval(v, i = i, j = j))
+system.time(swap.eval(v, i, j))
 ```
 
 We see that the second call of `swap.eval` is just as efficient as manually using the console, and still a large improvement over `swap`.
@@ -135,7 +133,7 @@ Surprisingly `swap.do` is just as inefficient as `swap`. This is surprising as t
     - Can run single line expressions using `Rscript -e command`.
     - `.Rdata` are not loaded by default.
     
-The major difference between these two command line tools is console output. `Rscript` seems more useful for doing quick commands in a remote server whereas `R CMD BATCH` would be more useful for running large programs on a remote server. However, `Rscript` does print warnings and errors and that is incredibly useful when running large jobs, but when combined with log files this could be the superior option to `R CMD BATCH`.
+The major difference between these two command line tools is console output. `Rscript` seems more useful for doing quick commands in a remote server whereas `R CMD BATCH` would be more useful for running large programs on a remote server. However, `Rscript` does print warnings and errors and that is incredibly useful when running large jobs, but when combined with log files this could be the superior option to `R CMD BATCH`. Both commands have same default behavior with respect to plotting; Plots are stored in `Rplots.pdf` unless specified otherwise. Additionally, both commands do not load previous `.Rdata` files unless otherwise specified and similarly do not save `.Rdata` upon completion.
 
 ### Compiling `.Rmd` Files
 
