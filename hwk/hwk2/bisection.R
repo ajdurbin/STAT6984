@@ -17,7 +17,6 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
   ## setup and check outputs
   fl <- f(xl)
   fr <- f(xr)
-  out$root_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
   out$int_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
   if(fl == 0) { out$ans <- xl; return(out) }
   else if(fr == 0) { out$ans <- xr; return(out) }
@@ -47,6 +46,7 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
     
   }
     
+  out$root_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
   
   ## successively refine xl and xr
   if(verb > 0)
@@ -80,13 +80,12 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
 print.bisection <- function(x, ...) {
   
   if(x$brckt_iter > 0){
-    cat("Took ", x$brckt_iter," iterations to expand interval for root\n")
     cat("Root of:\n")
     print(x$f)
-    cat("in (", x$int_prog$xl[-1], ", ", x$int_prog$xr[-1],
+    cat("in (", tail(x$int_prog$xl, n = 1), ", ", tail(x$int_prog$xr, n = 1),
         ") found after ", nrow(x$root_prog), " iterations: ",
         x$ans, "\n", "to a tolerance of ", x$tol, "\n", sep="") 
-    
+    cat("Took ", x$brckt_iter," iterations to expand interval for root\n")
   } else {
     
     cat("Root of:\n")
@@ -109,7 +108,7 @@ summary.bisection <- function(object, ...)
   cat("\nInterval progress is as follows\n")
   print(object$int_prog)
   cat("\nRoot progress is as follows\n")
-  print(object$prog_root)
+  print(object$root_prog)
 }
 
 
