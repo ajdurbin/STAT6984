@@ -5,7 +5,7 @@
 ## and f(xl)*f(xr) < 0;  output is a root of f
 ## in the interval (xl, xr)
 bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
-                      verb=0)
+                      verb=0, maxiter=100)
 {
   ## create an output object
   out <- list(f=f, tol=tol)
@@ -17,13 +17,40 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
   ## setup and check outputs
   fl <- f(xl)
   fr <- f(xr)
-  out$prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
+  out$root_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
+  out$int_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
   if(fl == 0) { out$ans <- xl; return(out) }
   else if(fr == 0) { out$ans <- xr; return(out) }
-  else if(fl * fr > 0)
-    stop("f(xl) * f(xr) > 0")
+  else if(fl * fr > 0){
+    
+    if(verb > 0 ) cat("Warning: fl * fr > 0\nIterating to expand interval\n")
+    iter <- 0
+    while(fl * fr > 0){
+      
+      iter <- iter + 1
+      xm <- (xr + xl)/2
+      w <- xr - xl
+      xl <- xm - w
+      xr <- xm + w
+      fl <- f(xl)
+      fr <- f(xr)
+      out$int_prog[iter,] <- c(xl, xr, fl, fr)
+      
+      if(verb > 0)
+        cat("iter=", iter, ", (xl, xr)=(", xl, ", ", xr, ")\n", sep="")
+      
+      if(iter >= maxiter) { stop('Max bracket iterations reached') }
+      
+    }  
+    
+    out$brckt_iter <- iter
+    
+  }
+    
   
   ## successively refine xl and xr
+  if(verb > 0)
+    cat("Iterating to find root\n")
   n <- 1
   while((xr - xl) > tol) {
     xm <- (xl + xr)/2
@@ -35,7 +62,7 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
     
     ## next iteration
     n <- n + 1
-    out$prog[n,] <- c(xl, xr, fl, fr)
+    out$root_prog[n,] <- c(xl, xr, fl, fr)
     if(verb > 0)
       cat("n=", n, ", (xl, xr)=(", xl, ", ", xr, ")\n", sep="")
   }
@@ -51,11 +78,25 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
 
 ## now make a printing method
 print.bisection <- function(x, ...) {
-  cat("Root of:\n")
-  print(x$f)
-  cat("in (", x$prog$xl[1], ", ", x$prog$xr[1],
-      ") found after ", nrow(x$prog), " iterations: ",
-      x$ans, "\n", "to a tolerance of ", x$tol, "\n", sep="")
+  
+  if(x$brckt_iter > 0){
+    cat("Took ", x$brckt_iter," iterations to expand interval for root\n")
+    cat("Root of:\n")
+    print(x$f)
+    cat("in (", x$int_prog$xl[-1], ", ", x$int_prog$xr[-1],
+        ") found after ", nrow(x$root_prog), " iterations: ",
+        x$ans, "\n", "to a tolerance of ", x$tol, "\n", sep="") 
+    
+  } else {
+    
+    cat("Root of:\n")
+    print(x$f)
+    cat("in (", x$root_prog$xl[1], ", ", x$root_prog$xr[1],
+        ") found after ", nrow(x$root_prog), " iterations: ",
+        x$ans, "\n", "to a tolerance of ", x$tol, "\n", sep="")
+    
+  }
+  
 }
 
 
@@ -65,8 +106,10 @@ print.bisection <- function(x, ...) {
 summary.bisection <- function(object, ...)
 {
   print(object, ...)
-  cat("\nProgress is as follows\n")
-  print(object$prog)
+  cat("\nInterval progress is as follows\n")
+  print(object$int_prog)
+  cat("\nRoot progress is as follows\n")
+  print(object$prog_root)
 }
 
 
