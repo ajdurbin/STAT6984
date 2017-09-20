@@ -119,6 +119,69 @@ The following code sources our bisection library for demonstration.
   source("bisection.R")
 ```
 
+## Part A
+
+Bracketing was added to function `bisection` and output was modified in methods `print` and `summary`. Function `bisection` now has a default argument `maxiter=100` that is the maximum iterations allowed when expanding the original interval until $fl \times fr > 0$. New contents added to class `bisection` are `brckt_iter` and `int_prog`. Additionally, `prog` is newly named `root_prog`. `brck_iter` denotes the number of bracket expansion iterations and `int_prog` is similar to `root_prog` in that it is a dataframe of `(xl, xr, fl, fr)` to keep track of the interval expansion progress.
+
+Now, if $fl \times fr > 0$, we iteratively double the interval width before computing $fl, fr$ again and track this progress in `int_prog`. A `stop` command is issued if `maxiter` is exceeded during this process. When $fl \times fr > 0$ is satisfied, the object is updated with `brckt_iter` and `int_prog`. The most recent `xl, xr` are then used as initial entries for the root finding procedure and the rest of the function resembles the original. Appropriate verbose statements were also included to warn the user of interval expansion and output the expansion progress.
+
+The `print` method was simply modified to check if `brckt_iter > 0` before printing appropriate output of the function, root, iterations to find the root, original and expanded interval to find the root, and the number of interval expansion iterations. If there was no interval expansion, the print statement is the same as the original method.
+
+Similarly, the summary procedure is simply modified to check if there was interval expansion before appending the `int_prog` to the output. If there was not any interval expansion, the summary statment is the same as the original method.
+
+Because of the interval expansion procedure, the valid endpoints are used as the initial values for root finding. Additionally, the new valid interval is wider than the user-specified interval. It is because of this that the `plot` method is unchanged.
+
+## Part B
+
+The following code demonstrates the bisection method for the class example with the user-specified interval containing the root.
+
+```{r}
+
+f <- function(x) log(x) - exp(-x)
+fr <- bisection(f, 1, 2)
+print(fr)
+summary(fr)
+plot(fr)
+
+```
+
+The following code demonstrates the bisection method with the user-specified interval that does not contain the root.
+
+```{r}
+
+f <- function(x) log(x) - exp(-x)
+fr <- bisection(f, 2, 3)
+print(fr)
+summary(fr)
+plot(fr)
+
+```
+
+We see that the appropriate information is printed in the print and summary statements and the initial values for the graph are different from the original.
+
+## Part C
+
+The following code deomonstrates the bisection method for the function $h(x) = (x-1)^3 - 2x^2 + 10 - sin(x)$.
+
+```{r}
+
+f <- function(x) (x-1)^3 - 2*x^2 + 10 - sin(x)
+fr <- bisection(f, 1, 2)
+print(fr)
+summary(fr)
+plot(fr)
+
+```
+
+We can further check our function's error handling by testing a function that has no roots. 
+
+```{r, error = TRUE}
+
+f <- function(x) x^2 + 1
+fr <- bisection(f, 1, 2)
+
+```
+
 # Problem 4
 
 ### R Command Line Tools
