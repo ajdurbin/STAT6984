@@ -86,7 +86,7 @@ print.bisection <- function(x, ...) {
         nrow(x$root_prog), " iterations: ",x$ans, "\n", "to a tolerance of ", 
         x$tol, "\n","after expanding the original interval \n(", x$int_prog$xl[1], 
         ", ", x$int_prog$xr[1], ") to (", tail(x$int_prog$xl, n = 1), ", ", 
-        tail(x$int_prog$xr, n = 1),")\nin ", nrow(x$int_prog), " iterations", 
+        tail(x$int_prog$xr, n = 1),")\nin ", nrow(x$int_prog), " iterations\n", 
         sep = "")
     
   } else {
@@ -139,7 +139,7 @@ plot.bisection <- function(object, gridlen=1000, after=NULL, ...)
   
   ## plots the true function
   xgrid <- seq(object$root_prog$xl[1], object$root_prog$xr[1], length=gridlen)
-  xgrid <- sort(union(xgrid, c(object$root_prog$xl, object$root_prog$xr)))
+  xgrid <- sort(union(xgrid, c(object$root_prog$xl, object$root_prog$xr))) 
   y <- object$f(xgrid) ## assumes a vectorized function
   plot(xgrid, y, type="l", col="gray", ...)
   
