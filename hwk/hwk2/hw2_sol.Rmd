@@ -3,13 +3,14 @@ title: 'Homework 2'
 subtitle: 'STAT6984: Advanced Statistical Computing'
 author: "Alexander Durbin"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
+# GET HELP FOR UNIX COMMAND ON NUMBER 4, ASK ABOUT PLOT COMMANDS
 
 # Problem 2
 
