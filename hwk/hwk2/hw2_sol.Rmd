@@ -3,7 +3,7 @@ title: 'Homework 2'
 subtitle: 'STAT6984: Advanced Statistical Computing'
 author: "Alexander Durbin"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +23,7 @@ swap <- function(v, i, j)
 	v[i] <- v[j]
 	v[j] <- tmp 
 }
-v <- 1:1000000000
+v <- 1:100000000
 system.time(swap(v, i=1, j=2))
 system.time(swap(v, i=1, j=2))
 ```
@@ -34,7 +34,7 @@ The following code is replicates switching the first and second elements of `v` 
 
 ```{r}
 
-v <- 1:1000000000
+v <- 1:100000000
 
 system.time({
   tmp <- v[1]
@@ -57,7 +57,7 @@ The following code is our implimentation of `swap.eval` using `quote` and `eval`
 
 ```{r}
 
-v <- 1:1000000000
+v <- 1:100000000
 i <- 1
 j <- 2
 
@@ -80,7 +80,7 @@ The following `swap.do` function uses the `do.call` function, which has options 
 
 ```{r}
 
-v <- 1:1000000000
+v <- 1:100000000
 
 swap.do <- function(v, i, j) 
 { 
@@ -210,12 +210,11 @@ The major difference between these two command line tools is console output. `Rs
 
 ### Compiling `.Rmd` Files
 
-Assuming the user is in the directory containing the relevant files, the command to compile `.Rmd` files with accompanying `.R` file is
+Assuming the user is in the directory containing the relevant files, the command to execute our `gen_output.R` in order to produce the `.html` and accompanying `.R` files is:
 
 ```{r, eval=FALSE}
-
-knitr::knit(input = my_file, tangle = TRUE)
-
+#!/bin/bash
+Rscript -e "source('gen_output.R')"
 ```
 
-The `tangle = TRUE` argument will extract code chunks from the `.Rmd` file and place them in a `.R` file with the same name as `my_file` except if `output_file` was specified for `output` in the `knit` statement.
+`Rscript -e` allows us to evaluate an `R` expression and we simply source our `gen_output.R` file.

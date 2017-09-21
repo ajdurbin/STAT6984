@@ -1,3 +1,2 @@
 #!/bin/bash
-
-Rscript -e "knitr::knit('hw2_sol.Rmd', tangle = TRUE)"
+Rscript -e "source('gen_output.R')"
