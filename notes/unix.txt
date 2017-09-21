@@ -42,4 +42,9 @@ pdflatex: Used for compiling .tex files
 clear: clear terminal 
 top: lists running process
 htop: more advanced top, opened in less mode and color coded
+tar -xzf file.tar.gz: unarchive and unzip file
+tar -czf file.tar.gz file: archive and compress file(s) into file.tar.gz
+du -h file: get size of file or directory
+which command: find directory where command binary is located
+pushd directory/popd: go to directory with pushd and then popd to back to original directory
 
