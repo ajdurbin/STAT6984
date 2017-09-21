@@ -124,6 +124,10 @@ summary.bisection <- function(object, ...)
 ## the ability to zoom in
 plot.bisection <- function(object, gridlen=1000, after=NULL, ...)
 {
+  
+  ## data interval and root expansion data frames for plotting
+  object$root_prog <- rbind.data.frame(object$int_prog, object$root_prog)
+  
   ## check if there is something to do
   if(nrow(object$root_prog) == 0) {
     cat("nothing to plot\n")

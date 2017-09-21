@@ -6,6 +6,12 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+he doesnt think he changed it either
+could color them differently in the plot
+just rbind the data frames and maybe make 
+can change color with plot functions based on interval expansion
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
@@ -174,7 +180,9 @@ plot(fr)
 
 ```
 
-We can further check our function's error handling by testing a function that has no roots. 
+We see that the interval is expanded twice before the condition $fl \times fr > 0$ is satisfied.
+
+We can further check our function's maximum iteration error handling by testing a function that has no roots. 
 
 ```{r, error = TRUE}
 
