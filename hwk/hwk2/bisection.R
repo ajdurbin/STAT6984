@@ -44,9 +44,13 @@ bisection <- function(f, xl, xr, tol=sqrt(.Machine$double.eps),
     }  
     
   }
-    
+  
   out$brckt_iter <- i
   out$root_prog <- data.frame(xl=xl, xr=xr, fl=fl, fr=fr)
+  ## check, root could be on the boundary when fl*fr=0 in while loop
+  ## so we check that here and return if thats the case
+  if(fl == 0) { out$ans <- xl; return(out) }
+  else if(fr == 0) { out$ans <- xr; return(out) }
   
   ## successively refine xl and xr
   if(verb > 0)
