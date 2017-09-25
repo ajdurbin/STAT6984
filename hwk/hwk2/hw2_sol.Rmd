@@ -199,7 +199,7 @@ fr <- bisection(f, 1, 2)
     - By default produces a `.Rout` file with same name as `input_file`.
     - `.Rout` contains the input and output of running the commands in `input_file` in the `R` console.
     - Plots specified in `input_file` are placed in `Rplots.pdf` on separate pages.
-    - Default options are not to save `.Rdata` and to not restore previous `.Rdata` when running scripts. Will need to manually use the `--save` or `--restore` switches while saving `.Rdata` in your script.
+    - Default options are to save `.Rdata` and to restore previous `.Rdata` when running scripts. Will need to manually use the `--save` or `--restore` switches to not save `.Rdata` in the command. Note that if script contains errors, no `.Rdata` will be saved.
     - Does not write output to command line, `cat` arguments in `input_file` appear as console output in `.Rout`.
     - Execution of file is halted when error found in `.R` and no error output appears in console. Warnings are also not printed to console.
     - Can accept conole input using `args` option and `arg <- commandArgs(TRUE)` in `.R` file. Then can index `args` like a vector and assign the values as needed using `var <- eval(parse(text = arg[1]))`. Be clear to not put spaces in `args` as `stdin` uses `space` as a separator.
@@ -212,9 +212,9 @@ fr <- bisection(f, 1, 2)
     - `args` are similarly used as in `R CMD BATCH` with the appropriate `commandArgs(TRUE)` statement.
     - Does not write to `.Rout` file by default or have options to. If wanting to capture the console output, will need to explicitly write to a file or use log files.
     - Can run single line expressions using `Rscript -e command`.
-    - `.Rdata` are not loaded by default.
+    - `.Rdata` are not saved or loaded by default. Will need to put save and load statements in script.
     
-The major difference between these two command line tools is console output. `Rscript` seems more useful for doing quick commands in a remote server whereas `R CMD BATCH` would be more useful for running large programs on a remote server. However, `Rscript` does print warnings and errors and that is incredibly useful when running large jobs, but when combined with log files this could be the superior option to `R CMD BATCH`. Both commands have same default behavior with respect to plotting; Plots are stored in `Rplots.pdf` unless specified otherwise. Additionally, both commands do not load previous `.Rdata` files unless otherwise specified and similarly do not save `.Rdata` upon completion.
+The major difference between these two command line tools is console output. `Rscript` seems more useful for doing quick commands in a remote server whereas `R CMD BATCH` would be more useful for running large programs on a remote server. However, `Rscript` does print warnings and errors and that is incredibly useful when running large jobs, but when combined with log files this could be the superior option to `R CMD BATCH`. Both commands have same default behavior with respect to plotting; Plots are stored in `Rplots.pdf` unless specified otherwise. Additionally, these commands differ when saving or loading `.Rdata` files by default. `R CMD BATCH` automatically saves and loads `.Rdata` in the working directory and this may or may not be what you want. `Rscript` needs explicit load and save commands within the script to produce `.Rdata` files.
 
 ### Compiling `.Rmd` Files
 
@@ -226,3 +226,14 @@ Rscript -e "source('gen_output.R')"
 ```
 
 `Rscript -e` allows us to evaluate an `R` expression and we simply source our `gen_output.R` file.
+
+`gen_output.R` contains the following commands
+
+```{r, eval=FALSE}
+
+knitr::knit('hw2_sol.Rmd', tangle = TRUE)
+rmarkdown::render('hw2_sol.Rmd')
+
+```
+
+The `tangle = TRUE` switch extracts the source code in the `.Rmd` file and the `render` command produces the `.html` output.
