@@ -28,7 +28,7 @@ options("getSymbols.yahoo.warning"=FALSE)
 
 __HOW TO HANDLE CRUMB ISSUE?__ The function call uses the command line tool `curl` to connect with Yahoo! and then stores the crumb for the query.
 
-The following code is similar to `get.multiple.quotes` from class with a couple intermediate steps. Each of the returned objects from `getSymbols` is of type `xts`. We convert them to a dataframe first, modify the column names, and add a new "symbol" column.
+The following function code is similar to `get.multiple.quotes` from class with a couple intermediate steps. Each of the returned objects from `getSymbols` is of type `xts`. We convert them to a dataframe first, modify the column names, and add a new "symbol" column and date column before binding them together.
 
 ```{r}
 
@@ -38,17 +38,38 @@ dow30.tickers <-
     "JPM", "MCD", "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", 
     "UTX", "UNH", "VZ", "V", "WMT")
 
-getSymbols(Symbols = dow30.tickers)
+my_getSymbols <- function(ticker){
+  
+  total <- NULL
+  
+  for (tck in ticker) {
+    
+    pckg <- getSymbols(Symbols = tck, auto.assign = FALSE)
+    tmp <- as.data.frame(pckg, row.names = FALSE)
+    tmp$Date <- index(pckg)
+    colnames(tmp) <- stringr::str_extract(colnames(tmp), "[^.]*$")
+    tmp$Symbol <- tck
+    total <- rbind(total, tmp)
+    
+  }
+  
+  return(total)
+  
+}
 
-
-# for(tck in dow30.tickers){
-#   
-#   as.name(tck) <- as.data.frame(as.name(tck))
-#   colnames(tck) <- stringr::str_extract(colnames(tck), "[^.]*$")
-#   tck$symbol <- rep(tck)
-#   head(tck)
-#   
-# }
-
+dow30 <- my_getSymbols(dow30.tickers)
+colnames(dow30)
 
 ```
+
+Part B
+
+The following code uses `transform` to compute `mid`.
+
+```{r}
+
+dow30 <- transform(dow30, Date = as.Date(Date), Mid = (High + Low) / 2)
+colnames(dow30)
+
+```
+
