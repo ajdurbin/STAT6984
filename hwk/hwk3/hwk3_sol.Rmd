@@ -16,6 +16,7 @@ library(tidyverse)
 library(quantmod)
 options("getSymbols.warning4.0" = FALSE)
 options("getSymbols.yahoo.warning"=FALSE)
+options(stringsAsFactors = FALSE)
 
 ```
 
@@ -58,7 +59,6 @@ my_getSymbols <- function(ticker){
 }
 
 dow30 <- my_getSymbols(dow30.tickers)
-colnames(dow30)
 
 ```
 
@@ -69,7 +69,6 @@ The following code uses `transform` to compute `mid`.
 ```{r}
 
 dow30 <- transform(dow30, Date = as.Date(Date), Mid = (High + Low) / 2)
-colnames(dow30)
 
 ```
 
@@ -108,3 +107,58 @@ dow30$Return <- calc_returns(dow30, dow30.tickers)
 
 ```
 
+## Part D,E,F ASK
+
+# Problem 3 ASK ABOUT BRK TYPE VARIABLES
+
+```{r, echo = FALSE}
+
+teach <- read.table('teach.csv', sep = ',', header = TRUE)
+teach <- teach %>% 
+  mutate(marry = ifelse(marry == TRUE, 'married', 'not married')) %>% 
+  mutate(degree = as.factor(degree)) %>% 
+  mutate(train = ifelse(train == TRUE, 'train', 'not train')) %>% 
+  mutate(type = as.factor(type)) %>% 
+  mutate(brk = ifelse(brk == TRUE, 'break', 'not break'))
+
+```
+
+The following code provides a plot of `salary` versus `months` by `sex`.
+
+```{r}
+
+ggplot(data = teach) +
+  geom_jitter(mapping = aes(x = months, y = salary, color = sex)) +
+  ggtitle('Salary Versus Number of Months By Sex')
+
+```
+
+The following code produces several boxplots for our analyses.
+
+```{r}
+
+p <- ggplot(data = teach)
+p + geom_boxplot(mapping = aes(sex, salary)) + ggtitle('Salary Distribution by Sex')
+p + geom_boxplot(mapping = aes(marry, salary)) + ggtitle('Salary Distribution by Marriage')
+p + geom_boxplot(mapping = aes(degree, salary)) + ggtitle('Salary Distribution by Degree')
+p + geom_boxplot(mapping = aes(type, salary)) + ggtitle('Salary Distribution by Type')
+p + geom_boxplot(mapping = aes(train, salary)) + ggtitle('Salary Distribution by Training')
+p + geom_boxplot(mapping = aes(brk, salary)) + ggtitle('Salary Distribution by Break')
+
+```
+
+The following code filters the data by teachers with degree status '1'. We provide a scatterplot and fitted regression lines by sex.
+
+```{r}
+
+teach <- teach %>% 
+  filter(degree == 0)
+
+ggplot(data = teach) +
+  geom_jitter(mapping = aes(x = months, y = salary, color = sex)) +
+  ggtitle('Salary Versus Number of Months By Sex With Degree "0"') +
+  geom_smooth(mapping = aes(x = months, y = salary), se = FALSE, method = 'lm')
+
+```
+
+# Problem 4
