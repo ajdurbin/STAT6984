@@ -1,0 +1,18 @@
+---
+title: "Homework 3"
+subtitle: "STAT6984: Advanced Statistical Computing"
+author: "Alexander Durbin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+# Problem 2
+
+## Part A
+
+`getSymbols` works similarly to `get.quotes` and `get.multiple.quotes` from class but has some slight differences. `getSymbols` *silently* loads the object into the Global Environment. That is, `my_data <- getSymbols(Symbol = 'F')` does not assign `my_data` to the returned value. Instead, `my_data` is assigned the *string*  `'F'` and then an `xts` object is assigned to `F`. This can be worked around by first using `setSymbolLookup(my_data = 'F')` and then calling `getSymbols(Symbol = my_data)`. Additionally, the `env` option can be used to specify an environment other than the global environment if the user prefers. `getSymbols` is used similarly to our functions from class where `getSymbols(Symbols = 'stock')` or `getSymbols(Symbols = c('stock1', 'stock2', ...,))`. However, providing multiple symbols will load each stock into a separate `xts` object, and not in a single dataframe as in `get.multiple.quotes`. We will then need to `rbind` the various symbols as in `get.multiple.quotes` like in class. Also, `getSymbols` has a `scr = ` argument for specifying the source of the data and defaults to Yahoo!.
