@@ -62,7 +62,7 @@ colnames(dow30)
 
 ```
 
-Part B
+## Part B
 
 The following code uses `transform` to compute `mid`.
 
@@ -70,6 +70,41 @@ The following code uses `transform` to compute `mid`.
 
 dow30 <- transform(dow30, Date = as.Date(Date), Mid = (High + Low) / 2)
 colnames(dow30)
+
+```
+
+## Part C
+
+The following code defines a new function to calculate returns.
+
+```{r}
+
+calc_returns <- function(your_data, tickers){
+  
+  new_col <- NULL
+  
+  for (tck in tickers){
+    
+    # get data by asset
+    tmp <- your_data[your_data$Symbol == tck, ]
+    # get the last n-1 values
+    new <- tail(tmp, n = -1)
+    # get first n+1 values
+    old <- head(tmp, n = -1)
+    # calculate return
+    r <- (new$Mid - old$Mid) / old$Mid
+    # make first value NA 
+    r <- append(r, NA, after = 0)
+    # append to total vector for return
+    new_col <- append(new_col, r, after = length(new_col))
+    
+  }
+  
+  return(new_col)
+  
+}
+
+dow30$Return <- calc_returns(dow30, dow30.tickers) 
 
 ```
 
