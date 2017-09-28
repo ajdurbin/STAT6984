@@ -12,3 +12,4 @@ total <- merge(x = total, y = key, by.x = "Visitor", by.y = "Team")
 colnames(total) <- c("Visitor", "Home", "Date", "VG", "HG", "T",
                      "Att.", "LOG", "Notes", "HABR", "HCONF", "HDIV",
                      "VABR", "VCONF", "VDIV")
+head(total)

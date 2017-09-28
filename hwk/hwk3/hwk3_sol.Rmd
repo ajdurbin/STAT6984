@@ -21,6 +21,7 @@ options(stringsAsFactors = FALSE)
 ```
 
 # ASK ABOUT USING DPLYR AND IF ITS OKAY
+# DO I INCLUDE OTL LIKE GOOGLE?
 
 # Problem 2
 
