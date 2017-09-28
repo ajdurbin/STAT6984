@@ -27,7 +27,7 @@ options(stringsAsFactors = FALSE)
 
 `getSymbols` works similarly to `get.quotes` and `get.multiple.quotes` from class but has some slight differences. `getSymbols` *silently* loads the object into the Global Environment. That is, `my_data <- getSymbols(Symbol = 'F')` does not assign `my_data` to the returned value. Instead, `my_data` is assigned the *string*  `'F'` and then an `xts` object is assigned to `F`. This can be worked around by first using `setSymbolLookup(my_data = 'F')` and then calling `getSymbols(Symbol = my_data)`. So we need to use the `auto.assign = FALSE` switch in an assignment statement to get the behavior we expect. Additionally, the `env` option can be used to specify an environment other than the global environment if the user prefers. `getSymbols` is used similarly to our functions from class where `getSymbols(Symbols = 'stock')` or `getSymbols(Symbols = c('stock1', 'stock2', ...,))`. However, providing multiple symbols will load each stock into a separate `xts` object, and not in a single dataframe as in `get.multiple.quotes`. We will then need to `rbind` the various symbols as in `get.multiple.quotes` like in class. Also, `getSymbols` has a `scr = ` argument for specifying the source of the data and defaults to Yahoo!.
 
-__HOW TO HANDLE CRUMB ISSUE?__ The function call uses the command line tool `curl` to connect with Yahoo! and then stores the crumb for the query.
+The function call uses the command line tool `curl` to connect with Yahoo! and then stores the crumb for the query.
 
 The following function code is similar to `get.multiple.quotes` from class with a couple intermediate steps. Each of the returned objects from `getSymbols` is of type `xts`. We convert them to a dataframe first, modify the column names, and add a new "symbol" column and date column before binding them together.
 
@@ -37,7 +37,7 @@ dow30.tickers <-
   c("MMM", "AXP", "AAPL", "BA", "CAT", "CVX","CSCO", "KO", 
     "DIS", "XOM", "GE", "GS", "HD", "IBM", "INTC", "JNJ",
     "JPM", "MCD", "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", 
-    "UTX", "UNH", "VZ", "V", "WMT")
+    "UTX", "UNH", "VZ", "V", "WMT", "DWDP")
 
 my_getSymbols <- function(ticker){
   
@@ -88,7 +88,7 @@ calc_returns <- function(your_data, tickers){
     tmp <- your_data[your_data$Symbol == tck, ]
     # get the last n-1 values
     new <- tail(tmp, n = -1)
-    # get first n+1 values
+    # get first n-1 values
     old <- head(tmp, n = -1)
     # calculate return
     r <- (new$Mid - old$Mid) / old$Mid
