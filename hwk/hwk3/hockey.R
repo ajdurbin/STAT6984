@@ -1,5 +1,6 @@
 # script before making function in rmarkdown
 
+options(stringsAsFactors = FALSE)
 # load data, merge, add columns -------------------------------------------
 
 web <- htmltab::htmltab("https://www.hockey-reference.com/leagues/NHL_2017_games.html",
@@ -74,8 +75,52 @@ total <- transform(total, VPTS = ifelse(VW == 0 & (TYPE == "SO" | TYPE == "OT"),
 
 # new df of team totals ---------------------------------------------------
 
+names <- unique(cbind(total$Visitor, total$VABR, total$VCONF, total$VDIV))
+by_team <- data.frame(team = names[, 1],
+                      abr = names[, 2],
+                      conf = names[, 3],
+                      div = names[ ,4],
+                      gp = rep(0),
+                      w = rep(0),
+                      l = rep(0),
+                      pts = rep(0),
+                      gf = rep(0),
+                      ga = rep(0),
+                      diff = rep(0))
 
-by_team <- NULL
+# fill in data
+for (tm in names[, 1]){
+  
+  by_team[by_team$team == tm, ]$gp = nrow(total[total$Visitor == tm, ]) +
+    nrow(total[total$Home == tm, ])
+  
+  by_team[by_team$team == tm, ]$w = nrow(total[total$Visitor == tm & total$VW == 1, ]) +
+    nrow(total[total$Home == tm & total$HW == 1, ])
+  
+  by_team[by_team$team == tm, ]$l = nrow(total[total$Visitor == tm & total$VW == 0, ]) +
+    nrow(total[total$Home == tm & total$HW == 0, ])
+  
+  by_team[by_team$team == tm, ]$pts = sum(total[total$Visitor == tm, ]$VPTS) +
+    sum(total[total$Home == tm, ]$HPTS)
+  
+  by_team[by_team$team == tm, ]$gf = sum(total[total$Visitor == tm, ]$VGF) +
+    sum(total[total$Home == tm, ]$HGF)
+  
+  by_team[by_team$team == tm, ]$ga = sum(total[total$Visitor == tm, ]$VGA) +
+    sum(total[total$Home == tm & total$HW == 1, ]$HGA)
+  
+  by_team[by_team$team == tm, ]$diff = sum(total[total$Visitor == tm, ]$VGD) +
+    sum(total[total$Home == tm & total$HW == 1, ]$HGD)
+  
+}
+
+# now print
+for(c in unique(names[, 3])){
+  for(d in unique(names[, 4])){
+    tmp <- by_team[by_team$conf == c & by_team$div == d, ]
+    print(tmp[with(tmp, order(pts, -l, w, diff, decreasing = TRUE)), ])
+  }
+}
 
 # misc scratch work -------------------------------------------------------
 
