@@ -1,4 +1,6 @@
-# script for number 4 before including in markdown solution
+# script before making function in rmarkdown
+
+# load data, merge, add columns -------------------------------------------
 
 web <- htmltab::htmltab("https://www.hockey-reference.com/leagues/NHL_2017_games.html",
                         which = 1,
@@ -19,9 +21,6 @@ total <- merge(x = total, y = key, by.x = "Visitor", by.y = "Team")
 colnames(total) <- c("Visitor", "Home", "Date", "VG", "HG", "TYPE",
                      "Att.", "LOG", "Notes", "HABR", "HCONF", "HDIV",
                      "VABR", "VCONF", "VDIV")
-# quick double check
-head(total)
-tail(total)
 
 # transform NA values in type to 'reg'
 total <- transform(total, TYPE = ifelse(is.na(TYPE), "REG", TYPE))
@@ -44,9 +43,6 @@ total <- transform(total, HGA = ifelse(TYPE != "SO", VG, 0))
 total <- transform(total, VGF = ifelse(TYPE != "SO", VG, 0))
 total <- transform(total, VGA = ifelse(TYPE != "SO", HG, 0))
 
-head(total)
-tail(total)
-
 # shootout has two cases
 # for wins
 total <- transform(total, HGF = ifelse(HW == 1 & TYPE == "SO", HG - 1, HGF))
@@ -60,10 +56,28 @@ total <- transform(total, HGA = ifelse(HW == 0 & TYPE == "SO", VG - 1, HGA))
 total <- transform(total, VGF = ifelse(HW == 0 & TYPE == "SO", VG - 1, VGF))
 total <- transform(total, VGA = ifelse(HW == 0 & TYPE == "SO", HG, VGA))
 
-head(total[total$TYPE == 'SO', ], n = 2)
+# goal diff
+total <- transform(total, HGD = HGF - HGA)
+total <- transform(total, VGD = VGF - VGA)
+
+
+# now add points for ot/so wins
+total$HPTS <- 0
+total$VPTS <- 0
+
+total <- transform(total, HPTS = ifelse(HW == 1, 2, HPTS))
+total <- transform(total, VPTS = ifelse(VW == 1, 2, VPTS))
+total <- transform(total, HPTS = ifelse(HW == 0 & (TYPE == "SO" | TYPE == "OT"), 1, HPTS))
+total <- transform(total, VPTS = ifelse(VW == 0 & (TYPE == "SO" | TYPE == "OT"), 1, VPTS))
 
 
 
+# new df of team totals ---------------------------------------------------
+
+
+by_team <- NULL
+
+# misc scratch work -------------------------------------------------------
 
 
 # scratch work
