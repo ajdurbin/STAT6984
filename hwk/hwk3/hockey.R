@@ -24,23 +24,46 @@ head(total)
 tail(total)
 
 # transform NA values in type to 'reg'
-total$TYPE[is.na(total$TYPE)] <- "REG"
+total <- transform(total, TYPE = ifelse(is.na(TYPE), "REG", TYPE))
+total <- transform(total, TYPE = ifelse(is.na(TYPE), "REG", TYPE))
 
-# add new columns for wins, goal diff based on home/away
+# add new columns for wins based on home/away
 total <- transform(total, HW = ifelse(HG>VG, 1, 0))
 total <- transform(total, VW = ifelse(VG>HG, 1, 0))
+
 # add new columns for goals for, goals against by home/away
-total <- transform(total, HGF = 0)
-total <- transform(total, IGA = 0)
-total <- transform(total, VGF = 0)
-total <- transform(total, VGA = 0)
+total$HGF <- 0
+total$HGA <- 0
+total$VGF <- 0
+total$VGA <- 0
+
+# nonshootout games
+# goals for and against are unchaged
+total <- transform(total, HGF = ifelse(TYPE != "SO", HG, 0))
+total <- transform(total, HGA = ifelse(TYPE != "SO", VG, 0))
+total <- transform(total, VGF = ifelse(TYPE != "SO", VG, 0))
+total <- transform(total, VGA = ifelse(TYPE != "SO", HG, 0))
+
+# shootout has two cases
+# for wins
+total <- transform(total, HGF = ifelse(HW == 1 & TYPE == "SO", HG - 1, 0))
+total <- transform(total, HGA = ifelse(HW == 1 & TYPE == "SO", VG, 0))
+total <- transform(total, VGF = ifelse(VW == 1 & TYPE == "SO", VG - 1, 0))
+total <- transform(total, VGA = ifelse(VW == 1 & TYPE == "SO", HG, 0))
+# for losses
+# total <- transform(total, HGF = ifelse(HW == 0 & TYPE == "SO", HG, 0))
+# total <- transform(total, HGA = ifelse(HW == 0 & TYPE == "SO", VG - 1, 0))
+# total <- transform(total, VGF = ifelse(VW == 0 & TYPE == "SO", VG, 0))
+# total <- transform(total, VGA = ifelse(VW == 0 & TYPE == "SO", HG - 1, 0))
 
 
 
-# this is all of the shootout, so need to treat these separately for gf, ga
-head(total[total$TYPE == "SO", ])
-tail(total[total$TYPE == "SO", ])
 
 
 
-total <- transform(total, VGD = -HGD)
+# scratch work
+# head(total[total$TYPE == "SO", ])
+# tail(total[total$TYPE == "SO", ])
+# total <- transform(total, VGD = -HGD)
+# head(total[total$HW == 1 & total$TYPE != "SO",])
+# tail(total[total$HW == 1 & total$TYPE != "SO",])
