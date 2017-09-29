@@ -44,18 +44,23 @@ total <- transform(total, HGA = ifelse(TYPE != "SO", VG, 0))
 total <- transform(total, VGF = ifelse(TYPE != "SO", VG, 0))
 total <- transform(total, VGA = ifelse(TYPE != "SO", HG, 0))
 
+head(total)
+tail(total)
+
 # shootout has two cases
 # for wins
-total <- transform(total, HGF = ifelse(HW == 1 & TYPE == "SO", HG - 1, 0))
-total <- transform(total, HGA = ifelse(HW == 1 & TYPE == "SO", VG, 0))
-total <- transform(total, VGF = ifelse(VW == 1 & TYPE == "SO", VG - 1, 0))
-total <- transform(total, VGA = ifelse(VW == 1 & TYPE == "SO", HG, 0))
-# for losses
-# total <- transform(total, HGF = ifelse(HW == 0 & TYPE == "SO", HG, 0))
-# total <- transform(total, HGA = ifelse(HW == 0 & TYPE == "SO", VG - 1, 0))
-# total <- transform(total, VGF = ifelse(VW == 0 & TYPE == "SO", VG, 0))
-# total <- transform(total, VGA = ifelse(VW == 0 & TYPE == "SO", HG - 1, 0))
+total <- transform(total, HGF = ifelse(HW == 1 & TYPE == "SO", HG - 1, HGF))
+total <- transform(total, HGA = ifelse(HW == 1 & TYPE == "SO", VG, HGA))
+total <- transform(total, VGF = ifelse(HW == 1 & TYPE == "SO", VG, VGF))
+total <- transform(total, VGA = ifelse(HW == 1 & TYPE == "SO", HG - 1, VGA))
 
+# for losses
+total <- transform(total, HGF = ifelse(HW == 0 & TYPE == "SO", HG, HGF))
+total <- transform(total, HGA = ifelse(HW == 0 & TYPE == "SO", VG - 1, HGA))
+total <- transform(total, VGF = ifelse(HW == 0 & TYPE == "SO", VG - 1, VGF))
+total <- transform(total, VGA = ifelse(HW == 0 & TYPE == "SO", HG, VGA))
+
+head(total[total$TYPE == 'SO', ], n = 2)
 
 
 
