@@ -20,9 +20,6 @@ options(stringsAsFactors = FALSE)
 
 ```
 
-# ASK ABOUT USING DPLYR AND IF ITS OKAY
-# DO I INCLUDE OTL LIKE GOOGLE?
-
 # Problem 2
 
 ## Part A
@@ -109,9 +106,7 @@ dow30$Return <- calc_returns(dow30, dow30.tickers)
 
 ```
 
-## Part D,E,F ASK
-
-# Problem 3 ASK ABOUT BRK TYPE VARIABLES
+# Problem 3
 
 ```{r, echo = FALSE}
 
@@ -164,3 +159,15 @@ ggplot(data = teach) +
 ```
 
 # Problem 4
+
+For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division.
+
+```{r}
+source("hockey.R")
+```
+
+`nhlstandings.sh` contains the following:
+
+```{r, eval=FALSE}
+Rscript -e "source('hockey.R')"
+```
