@@ -116,6 +116,7 @@ combo_by_team <- function(all_data){
   
 }
 
+# print team data nicely
 team_print <- function(team_data, abr = "", conf = "", div = ""){
   
   conference <- unique(team_data$conf)
