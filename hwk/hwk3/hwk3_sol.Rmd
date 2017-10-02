@@ -106,6 +106,35 @@ dow30$Return <- calc_returns(dow30, dow30.tickers)
 
 ```
 
+## Part D
+
+The following code calcualtes the Dow Jones Industrial Average (DJIA).
+
+```{r}
+
+ddConst <- 0.14523396877348
+
+dcalc <- function(the_day, the_data){
+  
+  tmp <- the_data %>% 
+    filter(Date == the_day) %>% 
+    select(Mid)
+  
+  pckg <- sum(tmp) / ddConst
+  return(pckg)
+  
+}
+
+djia <- sapply(unique(dow30$date), function(g) dcalc(g, the_data = dow30))
+
+```
+
+NEED TO COMPARE TO YAHOO DJIA BUT WHICH COLUMN TO COMPARE TO?
+
+## Part E
+
+The following code produces a market-capitalization version of the DJIA.
+
 # Problem 3
 
 ```{r, echo = FALSE}
