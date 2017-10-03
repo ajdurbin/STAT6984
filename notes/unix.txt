@@ -47,4 +47,4 @@ tar -czf file.tar.gz file: archive and compress file(s) into file.tar.gz
 du -h file: get size of file or directory
 which command: find directory where command binary is located
 pushd directory/popd: go to directory with pushd and then popd to back to original directory
-
+make/make install: used for compiling and installing software from command line
