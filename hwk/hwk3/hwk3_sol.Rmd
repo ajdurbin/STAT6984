@@ -135,6 +135,8 @@ NEED TO COMPARE TO YAHOO DJIA BUT WHICH COLUMN TO COMPARE TO?
 
 The following code produces a market-capitalization version of the DJIA.
 
+## Part F
+
 # Problem 3
 
 ```{r, echo = FALSE}
@@ -153,27 +155,41 @@ The following code provides a plot of `salary` versus `months` by `sex`.
 
 ```{r}
 
-ggplot(data = teach) +
+ggplot(data = teach) + 
   geom_jitter(mapping = aes(x = months, y = salary, color = sex)) +
   ggtitle('Salary Versus Number of Months By Sex')
 
 ```
 
-The following code produces several boxplots for our analyses.
+We see that for the first ~100 months, salary increases linearly with months worked. However after the ~100 month mark, there is significant variability in the teacher's salaries. Also it appears that for a given month, male salaries are higher than female salaries. We want to provide appropriate visualizations that show this difference is not just attributed to gender, that the other features of the data are influencing these differences.
+
+Maybe marriage is a deciding factor. The following code produces bar charts based on sex and marriage status. 
 
 ```{r}
 
-p <- ggplot(data = teach)
-p + geom_boxplot(mapping = aes(sex, salary)) + ggtitle('Salary Distribution by Sex')
-p + geom_boxplot(mapping = aes(marry, salary)) + ggtitle('Salary Distribution by Marriage')
-p + geom_boxplot(mapping = aes(degree, salary)) + ggtitle('Salary Distribution by Degree')
-p + geom_boxplot(mapping = aes(type, salary)) + ggtitle('Salary Distribution by Type')
-p + geom_boxplot(mapping = aes(train, salary)) + ggtitle('Salary Distribution by Training')
-p + geom_boxplot(mapping = aes(brk, salary)) + ggtitle('Salary Distribution by Break')
+ggplot(data = teach) +
+  geom_bar(mapping = aes(x = sex, fill = marry), position = position_dodge())
 
 ```
 
-The following code filters the data by teachers with degree status '1'. We provide a scatterplot and fitted regression lines by sex.
+We see that no male teachers in this data are married. Additionally, there are about twice as many married females as nonmarried females. We next look at the distribution of female salaries based on marriage status. 
+
+The following code produces boxplots of female salary distribution by marriage status. We also consider degree status as well. 
+
+```{r}
+
+females <- teach %>% 
+  filter(sex == "F")
+
+ggplot(data = females) +
+  geom_boxplot(mapping = aes(x = marry, y = salary, fill = degree))
+
+```
+
+It appears that non-married females of degree status '1' earn more on average than their married counterparts. Conversely, married females of degree status '2' earn significantly more than their non-married counterparts. Furthermore, There no married females of degree type '1', with a single non-married counterpart.
+
+
+The following code filters the data by teachers with degree status '0'. We provide a scatterplot and fitted regression lines by sex.
 
 ```{r}
 

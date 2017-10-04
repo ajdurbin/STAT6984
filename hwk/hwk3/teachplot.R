@@ -52,7 +52,8 @@ p + geom_violin(mapping = aes(train, salary)) + ggtitle('Salary Distribution by 
 p + geom_violin(mapping = aes(brk, salary)) + ggtitle('Salary Distribution by Break')
 
 # bar charts
-p + geom_bar(mapping = aes(sex, fill = marry)) + ggtitle('Salary Distribution by Sex')
+p + geom_bar(mapping = aes(sex:marry)) + ggtitle('Salary Distribution by Marriage')
+p + geom_bar(mapping = aes(sex)) + ggtitle('Salary Distribution by Sex')
 p + geom_bar(mapping = aes(marry)) + ggtitle('Salary Distribution by Marriage')
 p + geom_bar(mapping = aes(degree)) + ggtitle('Salary Distribution by Degree')
 p + geom_bar(mapping = aes(type)) + ggtitle('Salary Distribution by Type')
@@ -68,3 +69,13 @@ ggplot(data = teach, mapping = aes(x = months, y = salary, fill = marry:sex)) +
 ggplot(data = teach) +
   geom_jitter(mapping = aes(x = months, y = salary, color = sex:marry)) +
   ggtitle('Salary Versus Number of Months By Sex')
+
+# filter out males and look at them closer
+males <- teach %>% 
+  filter(sex == "M")
+summary(males)
+males %>% 
+  filter(brk == "no") %>%
+  summary()
+
+# look at marriage
