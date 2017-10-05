@@ -125,7 +125,10 @@ dcalc <- function(the_day, the_data){
   
 }
 
-djia <- sapply(unique(dow30$date), function(g) dcalc(g, the_data = dow30))
+dow30 <- dow30 %>% 
+  arrange(Date)
+
+djia <- sapply(unique(dow30$Date), function(g) dcalc(g, the_data = dow30))
 
 ```
 
