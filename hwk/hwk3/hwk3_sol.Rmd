@@ -208,7 +208,7 @@ ggplot(data = teach) +
 
 # Problem 4
 
-For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division.
+For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division. Teams that have yet to play a single game do not appear in the standings. 
 
 ```{r}
 source("hockey.R")

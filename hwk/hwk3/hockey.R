@@ -21,6 +21,12 @@ combo_all <- function(web, key){
                        "Att.", "LOG", "Notes", "HABR", "HCONF", "HDIV",
                        "VABR", "VCONF", "VDIV")
   
+  # make game played metric to count for actual games
+  all_data <- transform(all_data, PLAYED = ifelse(is.na(VG), 0, 1))
+  
+  # get subset of the actual games that are played
+  all_data <- all_data[all_data$PLAYED == 1, ]
+  
   # transform NA values in type to 'reg'
   all_data <- transform(all_data, TYPE = ifelse(is.na(TYPE), "REG", TYPE))
   all_data <- transform(all_data, TYPE = ifelse(is.na(TYPE), "REG", TYPE))
@@ -154,16 +160,12 @@ team_print <- function(team_data, abr = "", conf = "", div = ""){
 
 # test functions ----------------------------------------------------------
 
-web <- htmltab::htmltab("https://www.hockey-reference.com/leagues/NHL_2017_games.html",
+web <- htmltab::htmltab("https://www.hockey-reference.com/leagues/NHL_2018_games.html",
                         which = 1,
                         colNames = c("Date", "Visitor", "VG", "Home", "HG", "T",
                                      "Att.", "LOG", "Notes"),
                         rm_nodata_cols = FALSE)
 key <- read.table(file = "nhlteams.csv", header = TRUE, sep = ",")
-
-# transform VG, HG into numeric for computation later
-web$HG <- as.numeric(web$HG)
-web$VG <- as.numeric(web$VG)
 
 all_data <- combo_all(web = web, key = key)
 team_data <- combo_by_team(all_data = all_data)
