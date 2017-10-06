@@ -79,3 +79,35 @@ males %>%
   summary()
 
 # look at marriage
+
+
+
+
+# months > 100 ------------------------------------------------------------
+
+senior <- teach %>% 
+  filter(months > 100)
+
+p <- ggplot(data = senior)
+p + geom_boxplot(mapping = aes(sex, salary)) + ggtitle('Salary Distribution by Sex')
+# males make more than females, significant, single outlier, both distributions skewed
+p + geom_boxplot(mapping = aes(marry, salary)) + ggtitle('Salary Distribution by Marriage')
+# appears that not married earn more than married on average
+p + geom_boxplot(mapping = aes(degree, salary)) + ggtitle('Salary Distribution by Degree')
+# salary increases as degree type increases
+# more variability in degree 1,2
+# outlier in degree 3,1 also have less variability
+p + geom_boxplot(mapping = aes(type, salary)) + ggtitle('Salary Distribution by Type')
+# b earns more with more variability
+p + geom_boxplot(mapping = aes(train, salary)) + ggtitle('Salary Distribution by Training')
+# train earns more on average
+p + geom_boxplot(mapping = aes(brk, salary)) + ggtitle('Salary Distribution by Break')
+# no break earns less on average with more variability, slight skew
+# both skewed distributions
+
+# cross filtering the above
+p + geom_boxplot(mapping = aes(sex, salary, fill = degree)) 
+p + geom_boxplot(mapping = aes(sex, salary, fill = type)) 
+p + geom_boxplot(mapping = aes(sex, salary, fill = train))
+p + geom_boxplot(mapping = aes(sex, salary, fill = brk))
+p + geom_boxplot(mapping = aes(sex, salary, fill = marry))

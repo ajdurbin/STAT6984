@@ -164,51 +164,153 @@ ggplot(data = teach) +
 
 ```
 
-We see that for the first ~100 months, salary increases linearly with months worked. However after the ~100 month mark, there is significant variability in the teacher's salaries. Also it appears that for a given month, male salaries are higher than female salaries. We want to provide appropriate visualizations that show this difference is not just attributed to gender, that the other features of the data are influencing these differences.
+We see that for the first ~100 months, salary increases linearly with months worked. However after the ~100 month mark, there is significant variability in the teacher's salaries. Also it appears that for a given month, male salaries are higher than female salaries. We want to provide appropriate visualizations that show this difference is not just attributed to gender, that the other features of the data are also influencing these differences.
 
-Maybe marriage is a deciding factor. The following code produces bar charts based on sex and marriage status. 
+The following code filters out teacher with less than 100 months worked.
+
+```{r}
+
+senior <- teach %>% 
+  filter(months > 100)
+
+```
+
+The following code gives a bar chart for males and females based on marriage
 
 ```{r}
 
 ggplot(data = teach) +
-  geom_bar(mapping = aes(x = sex, fill = marry), position = position_dodge())
+  geom_bar(mapping = aes(x = sex, fill = marry), position = position_dodge()) +
+  ggtitle("Count Of Males and Females By Marriage")
 
 ```
 
-We see that no male teachers in this data are married. Additionally, there are about twice as many married females as nonmarried females. We next look at the distribution of female salaries based on marriage status. 
+We see that there are no married males and about half as many non-married females as married females. There are also more females than males in this subset of the data. It would be interesting to see if marriage is an important factor in female salary. 
 
-The following code produces boxplots of female salary distribution by marriage status. We also consider degree status as well. 
-
-```{r}
-
-females <- teach %>% 
-  filter(sex == "F")
-
-ggplot(data = females) +
-  geom_boxplot(mapping = aes(x = marry, y = salary, fill = degree))
-
-```
-
-It appears that non-married females of degree status '1' earn more on average than their married counterparts. Conversely, married females of degree status '2' earn significantly more than their non-married counterparts. Furthermore, There no married females of degree type '1', with a single non-married counterpart.
-
-
-The following code filters the data by teachers with degree status '0'. We provide a scatterplot and fitted regression lines by sex.
+The following code gives boxplots for male and female salary filtered by marriage status.
 
 ```{r}
-
-teach <- teach %>% 
-  filter(degree == 0)
 
 ggplot(data = teach) +
-  geom_jitter(mapping = aes(x = months, y = salary, color = sex)) +
-  ggtitle('Salary Versus Number of Months By Sex With Degree "0"') +
-  geom_smooth(mapping = aes(x = months, y = salary), se = FALSE, method = 'lm')
+  geom_boxplot(mapping = aes(sex, salary, fill = marry), position = position_dodge()) +
+  ggtitle('Male vs Female Salaries By Marriage Status')
 
 ```
+
+We see that non-married females earn more than married females and are similar to the male population. That is, there is no significant difference between non-married females and male salaries and also there appears to be a significant difference in married vs non-married female salary.  
+
+The following code gives bar chart of degree for both sexes. This can be useful to further break down salary average salary differences between the two sexes. 
+
+```{r}
+
+ggplot(data = teach) +
+  geom_bar(mapping = aes(x = degree, fill = sex), position = position_dodge()) +
+  ggtitle('Count Of Degree By Sex')
+
+```
+
+We see that the majority of the data are of degree '0', with males dominating degrees '1' and '2' with no females of degree '3'.
+
+We next want to compare the salaries of males and females within these groups and the following code does so.
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = sex, y = salary), position = position_dodge()) +
+  facet_wrap(~degree, nrow = 2) +
+  ggtitle('Distribution of Salary By Sex And Degree')
+
+```
+
+We see that that male salaries of degree '0' are slightly, but no significantly, higher than female degree '0' salaries. The salaries are comparable between sexes for degree type '1' and not comparable for degree type '3'. Most importantly, there appears to be a significant difference between male and female salaries for type '2'.
+
+We also want to consider the `type` variable in our visualizations. The following code provides bar chart for each sex based on `type`. 
+
+```{r}
+
+ggplot(data = teach) +
+  geom_bar(mapping = aes(x = type, fill = sex), position = position_dodge()) +
+  ggtitle('Counts Of Type By Sex')
+
+
+```
+
+There appears to be an inverse relationship with `type` and `sex`. There are double female type 'A' than male type 'A' and oppositely for type 'B'. The following code gives boxplots of salary based on sex and type.
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = type, y = salary, fill = sex), position = position_dodge()) +
+  ggtitle("Male vs Female Salary By Type")
+
+```
+
+The distributions of type 'A' male and female salaries are comparable and both skewed distributions. However, type 'B' salaries by sex are significantly different, with male salary higher.
+
+We next consider the `train` and `break` variables.
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = train, y = salary, fill = sex), position = position_dodge()) +
+  ggtitle("Male vs Female Salary By Train")
+
+```
+
+There is a significant difference in male and female salaries when training. The distributions are comparable with no training, with slight advantage to male teachers. 
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = brk, y = salary, fill = sex), position = position_dodge()) +
+  ggtitle("Male vs Female Salary By Break")
+
+
+```
+
+Salaries of males with breaks are significantly higher than females with breaks. The distributions are comparable with no breaks. 
+
+Thus far, when filtering by single variables `type`, `brk`, and `train`, we have identified significantly higher salaries. We next present boxplots filtered by two variables at a time, similar to sex, salary, and degree type. 
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = sex, y = salary), position = position_dodge()) +
+  facet_wrap(~type, nrow = 2) +
+  ggtitle('Distribution of Salary By Sex And Type')
+
+```
+
+There appears little difference betwee salaries for type 'A' but a significant difference in salaries for type 'B'.
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = sex, y = salary), position = position_dodge()) +
+  facet_wrap(~brk, nrow = 2) +
+  ggtitle('Distribution of Salary By Sex And Break')
+
+```
+
+There is a siginificant difference in salaries in males and females who work over summer break. For the population not working over break, males have a slightly higher salary than females, but not significantly. 
+
+```{r}
+
+ggplot(data = teach) +
+  geom_boxplot(mapping = aes(x = sex, y = salary), position = position_dodge()) +
+  facet_wrap(~train, nrow = 2) +
+  ggtitle('Distribution of Salary By Sex And Training')
+
+```
+
+Males and females with no training have comparable salaries. However, there is a significant difference in male and female salaries for those who do train with males having the advantage. 
+
+The above visualizations, while simple, provide insight into what possible factors can influence the salary differences in genders. Making boxplots by both sex and one other factor show that there are possible significant interactions that can account for these differences. 
+
 
 # Problem 4
 
-For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division. Teams that have yet to play a single game do not appear in the standings. 
+For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division. Teams that have yet to play a single game will not appear in the standings. 
 
 ```{r}
 source("hockey.R")
