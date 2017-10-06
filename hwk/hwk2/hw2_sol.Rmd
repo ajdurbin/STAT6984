@@ -3,7 +3,7 @@ title: 'Homework 2'
 subtitle: 'STAT6984: Advanced Statistical Computing'
 author: "Alexander Durbin"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: pdf_document
 ---
 
 he doesnt think he changed it either
