@@ -159,9 +159,112 @@ We see that for the most recent datasets, the differences are much smaller.
 
 ## Part E
 
-The following code produces a market-capitalization version of the DJIA.
+The following code calculates returns and makes a datafame of both the market cap and DJIA returns. 
+
+```{r}
+
+market_caps <- c(129.2,
+                 81.2,
+                 806.14,
+                 152.28,
+                 74.81,
+                 222.75,
+                 167.03,
+                 194.46,
+                 154.41,
+                 347.44,
+                 203.072,
+                 94.212,
+                 195.66,
+                 137.58,
+                 186.79,
+                 358.33,
+                 338.99,
+                 129.68,
+                 175.55,
+                 588.64,
+                 84.74,
+                 214.52,
+                 235.6,
+                 34.63,
+                 94.38,
+                 189.68,
+                 199.92,
+                 245.78,
+                 242.337,
+                 167.82)
+
+mc_divisor <- sum(market_caps)
+
+mc_info <- data.frame(Symbol = dow30.tickers, market_cap = market_caps)
+# filter data in past year
+dow30 <- dow30 %>%
+  filter(Date > as.Date("2016-10-08"))
+caps <- caps %>% 
+  filter(date > as.Date("2016-10-08"))
+dow30$mc <- 0
+# could not think of slicker way
+for(i in 1 : nrow(dow30)){
+  
+  sym <- dow30[i, ]$Symbol
+  dow30[i, ]$mc <- mc_info[mc_info$Symbol == sym, 2]
+  
+}
+
+# get contribution
+dow30 <- transform(dow30, mc_contrib = Mid * mc)
+tmp <- dow30 %>% 
+  group_by(Date) %>% 
+  summarise(marketcap = sum(mc_contrib) / mc_divisor) 
+# calculate returns
+caps$market <- tmp$marketcap
+caps <- caps %>% 
+  mutate(djia_return = (djia - lag(djia))/lag(djia)) %>% 
+  mutate(market_return = (market - lag(market))/lag(market))
+
+ggplot(data = caps) +
+  geom_line(mapping = aes(x = date, y = djia_return, color = "DJIA")) +
+  geom_line(mapping = aes(x = date, y = market_return, color = "Market")) +
+  scale_color_manual(values = c("blue", "red")) +
+  ggtitle("Returns By Date") +
+  ylab("Return") +
+  xlab("Date")
+
+# data frame of returns
+head(caps)
+
+```
+
+We can see that both of the returns follow very similar trends over the past year. However, the DJIA appears to have more extreme changes than the Market version.
+
 
 ## Part F
+
+The following code calculates correlations between our previous returns and the returns for both of DJIA and the market-weighting.
+
+```{r}
+
+# storage
+cor_data <- data.frame(Symbol = dow30.tickers)
+cor_data$m_cor <- 0
+cor_data$d_cor <- 0
+
+for(i in 1:30){
+  
+  tmp <- dow30 %>%
+    filter(Symbol == cor_data$Symbol[i]) %>% 
+    arrange(Date) %>% 
+    select(Return)
+  cor_data$d_cor[i] <- cor(tmp$Return[-1], caps$djia_return[-1])
+  cor_data$m_cor[i] <- cor(tmp$Return[-1], caps$market_return[-1])
+  
+}
+
+head(cor_data)
+# ATTENTION:
+# there is an ordering issue when i calculate the correlations
+# i've checked my calculations all the way before the correlation calculation and they match Chris's - not able to figure it out
+```
 
 # Problem 3
 
