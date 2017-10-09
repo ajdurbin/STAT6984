@@ -36,7 +36,7 @@ dow30.tickers <-
   c("MMM", "AXP", "AAPL", "BA", "CAT", "CVX","CSCO", "KO", 
     "DIS", "XOM", "GE", "GS", "HD", "IBM", "INTC", "JNJ",
     "JPM", "MCD", "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", 
-    "UTX", "UNH", "VZ", "V", "WMT")
+    "UTX", "UNH", "VZ", "V", "WMT", "DWDP")
 
 my_getSymbols <- function(ticker){
   
