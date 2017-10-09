@@ -108,7 +108,7 @@ dow30$Return <- calc_returns(dow30, dow30.tickers)
 
 ## Part D
 
-The following code calcualtes the Dow Jones Industrial Average (DJIA).
+The following code calcualtes the Dow Jones Industrial Average (DJIA) and then compares them to the one downloaded from Yahoo! Finanace. We first compare the differences across the entire datasets before focusing only on the dates after September 1, 2017 where we got our Dow Divisor from.
 
 ```{r}
 
@@ -129,10 +129,33 @@ dow30 <- dow30 %>%
   arrange(Date)
 
 djia <- sapply(unique(dow30$Date), function(g) dcalc(g, the_data = dow30))
+# date, djia vals
+caps <- data.frame(date = unique(dow30$Date), djia = djia)
+
+# yahoo finance csv downloaded
+ydjia <- read.csv("^DJI.csv")
+ydjia <- ydjia %>%
+  arrange(desc(Date))
+# sort by date and get take subset of caps
+ydjia <- ydjia[1:nrow(caps), ]
+ydjia <- ydjia %>% 
+  arrange(Date)
+
+# calculate mid prices
+ydjia <- transform(ydjia, Date = as.Date(Date), Mid = (High + Low) / 2)
+# summary of differences
+summary(abs(caps$djia - ydjia$Mid))
+# summary of differences from september first to now
+sept_first = as.Date("2017-09-01")
+ycur <- ydjia %>%
+  filter(Date >= sept_first)
+ccur <- caps %>% 
+  filter(date >= sept_first)
+summary(abs(ccur$djia - ycur$Mid))
 
 ```
 
-NEED TO COMPARE TO YAHOO DJIA BUT WHICH COLUMN TO COMPARE TO?
+We see that for the most recent datasets, the differences are much smaller.
 
 ## Part E
 
