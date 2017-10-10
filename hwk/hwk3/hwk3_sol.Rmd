@@ -261,9 +261,31 @@ for(i in 1:30){
 }
 
 head(cor_data)
-# ATTENTION:
-# there is an ordering issue when i calculate the correlations
-# i've checked my calculations all the way before the correlation calculation and they match Chris's - not able to figure it out
+
+```
+
+The following code orders our dow30 dataframe by the correlations for both the market return and djia returns.
+
+```{r}
+
+d_sort <- cor_data[order(cor_data$d_cor, decreasing = TRUE), "Symbol"]
+head(d_sort)
+m_sort <- cor_data[order(cor_data$m_cor, decreasing = TRUE), "Symbol"]
+head(m_sort)
+
+dow30_d_sort <- dow30 %>%
+  group_by(Date) %>% 
+  slice(match(d_sort, Symbol)) %>% 
+  arrange(Date)
+  
+dow30_m_sort <- dow30 %>%
+  group_by(Date) %>% 
+  slice(match(m_sort, Symbol)) %>% 
+  arrange(Date)
+
+head(dow30_d_sort)
+head(dow30_m_sort)
+
 ```
 
 # Problem 3
@@ -436,7 +458,7 @@ The above visualizations, while simple, provide insight into what possible facto
 
 # Problem 4
 
-For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division. Teams that have yet to play a single game will not appear in the standings. 
+For the hockey problem, the following code will execute `hockey.R` and print the standings sorted by conference and division. 
 
 ```{r}
 source("hockey.R")
