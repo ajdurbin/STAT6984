@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 
 library(tidyverse)
 library(quantmod)
+library(gridExtra)
 options("getSymbols.warning4.0" = FALSE)
 options("getSymbols.yahoo.warning"=FALSE)
 options(stringsAsFactors = FALSE)
@@ -302,6 +303,36 @@ teach <- teach %>%
 
 ```
 
+The following code produces box plots of the various factors versus 'salary'.
+
+```{r}
+
+p <- ggplot(data = teach)
+s <- p + geom_boxplot(mapping = aes(x = sex, y = salary))
+m <- p + geom_boxplot(mapping = aes(x = marry, y = salary))
+d <- p + geom_boxplot(mapping = aes(x = degree, y = salary))
+ty <- p + geom_boxplot(mapping = aes(x = type, y = salary))
+tr <- p + geom_boxplot(mapping = aes(x = train, y = salary))
+b <- p + geom_boxplot(mapping = aes(x = brk, y = salary))
+grid.arrange(s, m, d, ty, tr, b, ncol = 2)
+
+```
+
+It appears that males have a higher salary than females, as do not-married versus married teachers. As we would expect, salary increases linearly with degree status. Furthermore, teachers who train have a significantly higher salary than those who don't.
+
+The following code provides a plot of `salary` verses `months` by `sex` for teachers of degree type `0`.
+
+```{r}
+
+ggplot(data = teach %>% filter(degree == 0)) + 
+  geom_jitter(mapping = aes(x = months, y = salary, color = sex)) +
+  ggtitle('Salary Versus Number of Months By Sex And Degree "0"') +
+  geom_smooth(mapping = aes(x = months, y = salary), method = 'lm', se = FALSE)
+
+```
+
+Linear regression does not seem to be an appropriate choice for this data. There is significant variability in the observations after the first ~100 months.
+
 The following code provides a plot of `salary` versus `months` by `sex`.
 
 ```{r}
@@ -311,6 +342,7 @@ ggplot(data = teach) +
   ggtitle('Salary Versus Number of Months By Sex')
 
 ```
+
 
 We see that for the first ~100 months, salary increases linearly with months worked. However after the ~100 month mark, there is significant variability in the teacher's salaries. Also it appears that for a given month, male salaries are higher than female salaries. We want to provide appropriate visualizations that show this difference is not just attributed to gender, that the other features of the data are also influencing these differences.
 
