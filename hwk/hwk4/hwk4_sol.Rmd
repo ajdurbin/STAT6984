@@ -1,0 +1,155 @@
+---
+title: "Homework 4 Solutions"
+subtitle: "Advanced Statistical Computing"
+author: "Alexander Durbin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(boot)
+```
+
+# Problem 2
+
+```{r}
+
+## probability calculation for A & S
+n <- 1000
+# S <- runif(n, 10, 11.5)
+# A <- runif(n, 10.5, 12)
+S <- rnorm(n, 10.5, 1)
+A <- rnorm(n, 11, 1.5)
+prob <- mean(A < S)
+prob
+
+## plotting the acceptance region
+plot(S[1:1000], A[1:1000])
+polygon(c(10.5, 11.5, 11.5, 10.5),
+	c(10.5, 10.5, 11.5, 10.5),
+        density=10, angle=135)
+
+## (sqrt) variance of estimate
+se <- sqrt(prob*(1-prob)/n)
+## normal approximation to binomial
+prob + c(-1,1)*1.96*se
+
+## expected differences
+diff <- A - S
+d <- c(mean(diff), mean(abs(diff)))
+se <- c(sd(diff), sd(abs(diff)))/sqrt(n)
+d[1] + c(-1,1)*1.96*se[1]
+d[2] + c(-1,1)*1.96*se[2]
+
+```
+
+# Problem 3
+
+The bootstrap linear regression example from class is the following code.
+
+```{r}
+
+## bootstrapped linear regression
+n <- 200
+X <- 1/cbind(rt(n, df=1), rt(n, df=1), rt(n,df=1))
+beta <- c(1,2,3,0)
+Y <- beta[1] + X %*% beta[-1] + rnorm(100, sd=3)
+fit <- lm(Y~X)
+coef(fit)  ## try/not in slides
+summary(fit)$cov.unscaled
+
+## now take the bootstrap samples
+B <- 10000
+beta.hat.boot <- matrix(NA, nrow=B, ncol=length(beta))
+for(b in 1:B) {
+  indices <- sample(1:nrow(X), nrow(X), replace=TRUE)
+  beta.hat.boot[b,] <- coef(lm(Y[indices]~X[indices,]))
+}
+
+## compare to cov/unscaled above
+cov(beta.hat.boot)
+
+## comparing marginals
+par(mfrow=c(2,2))
+for(i in 1:4) {
+  m <- coef(fit)[i]
+  s <- sqrt(cov(beta.hat.boot)[i,i])
+  x <- m + seq(-4*s, 4*s, length=1000)
+  xlim <- range(c(x, beta.hat.boot[,i]))
+  hist(beta.hat.boot[,i], freq=FALSE, xlim=xlim,
+       xlab=i, main="", breaks=20)
+  lines(x, dnorm(x, m, s), col=2, lwd=2)
+}
+
+```
+
+Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples.
+
+```{r}
+
+## 'statistic' for boot call
+reg_coef <- function(data, indices){
+  fit <- lm(Y ~ ., data = data[indices, ])
+  return(coef(fit))
+}
+
+## boot call
+df <- data.frame(Y = Y, X = X)
+bs_reg <- boot(data = df, statistic = reg_coef, R = B)
+
+## compare to cov/unscaled above
+cov(bs_reg$t)
+
+## comparing marginals
+par(mfrow=c(2,2))
+for(i in 1:4) {
+  m <- coef(fit)[i]
+  s <- sqrt(cov(bs_reg$t)[i,i])
+  x <- m + seq(-4*s, 4*s, length=1000)
+  xlim <- range(c(x, bs_reg$t[,i]))
+  hist(bs_reg$t[,i], freq=FALSE, xlim=xlim,
+       xlab=i, main="", breaks=20)
+  lines(x, dnorm(x, m, s), col=2, lwd=2)
+}
+
+```
+
+# Problem 4
+
+The spline code from the lecture slides is as follows.
+
+```{r}
+
+
+## non-linear data
+X <- seq(0,10,length=50)
+Ytrue <- (sin(pi*X/5) + 0.2*cos(4*pi*X/5))
+Y <- Ytrue + rnorm(length(Ytrue), sd=0.1)
+plot(X,Y)
+
+## predictive locations
+XX <- seq(0,10,length=199)
+YYtrue <- (sin(pi*XX/5) + 0.2*cos(4*pi*XX/5))
+lines(XX, YYtrue, col="gray", type="l")
+
+## smoothing splines with 11 DoFs
+fit1 <- smooth.spline(X, Y, df=11)
+YY1 <- as.matrix(predict(fit1, data.frame(X=XX))$y)
+lines(XX, YY1, col=5, lty=5, lwd=2)
+## try/not in slides: higher fidelity
+fit2 <- smooth.spline(X, Y, df=15)
+YY2 <- as.matrix(predict(fit2, data.frame(X=XX))$y)
+lines(XX, YY2, col=6, lty=6, lwd=2)
+
+## loess smoothing
+fit3 <- loess(Y~X, span=0.5)
+YY1 <- as.matrix(predict(fit3, data.frame(X=XX)))
+lines(XX, YY2, col=7, lty=7, lwd=2)
+legend("topright", c("spline", "loess"),
+       lty=c(5,7), col=c(5,7), lwd=2)
+
+```
