@@ -14,7 +14,103 @@ knitr::opts_chunk$set(echo = TRUE)
 library(boot)
 ```
 
+# Problem 1
+## Part A
+
+The following code contains all function declarations.
+
+```{r}
+
+powers1 <- function(x, dg)
+{
+  pw <- matrix(x, nrow=length(x))
+  prod <- x ## current product
+  for(i in 2:dg) {
+    prod <- prod * x
+    pw <- cbind(pw, prod)
+  }
+  return(pw)
+}
+
+powers2 <- function(x, dg)
+{
+  pw <- matrix(nrow=length(x), ncol=dg)
+  prod <- x ## current product
+  pw[,1] <- prod
+  for(i in 2:dg) {
+    prod <- prod * x
+    pw[,i] <- prod
+  }
+}
+
+powers3 <- function(x, dg) outer(x, 1:dg,"^")
+
+powers4 <- function(x, dg) 
+{
+  repx <- matrix(rep(x, dg), nrow=length(x))
+  return(t(apply(repx, 1, cumprod)))
+}
+
+x <- runif(10000000)
+dg <- 16
+
+```
+
+`powers3` provides the shortest syntax for computing the powers of a vector. It uses the `outer` function in `R` with the exponentiation operator. It will loop through all of the values in `dg` and compute `x` raised to that power. There is certainly some form of copying involved here.
+
+`powers4` tries to rectify the copying issue by preallocating storage in `repx` with copies of `x` itself. It then uses the `cumprod` function inside the `apply` statement to perform the exponentiation. The hope is that the `apply` statement can make up speed over using a `for` loop. However, we have shown in class that the `apply` family of functions can be slow in some cases and beaten by regualr `for` loops. This operation could be sped up by using the `parallel` package and a `parapply` statement instead.
+
+Both of these functions elect for cleaner syntax than the original functions.
+
+## Part B
+
+The following code provides the runtimes for each of the above functions twice.
+
+```{r}
+
+system.time(powers1(x, dg))
+system.time(powers1(x, dg))
+
+system.time(powers2(x, dg))
+system.time(powers2(x, dg))
+
+system.time(powers3(x, dg))
+system.time(powers3(x, dg))
+
+system.time(powers4(x, dg))
+system.time(powers4(x, dg))
+
+```
+
+We see that `powers1` is by far the fastest. `powers2` slightly edges out `powers3` and `powers4` is extremely slow.
+
+## Part C
+
+The following code profiles `powers3`.
+
+```{r}
+
+Rprof(memory.profiling = TRUE)
+tmp <- powers3(x, dg)
+Rprof(NULL)
+summaryRprof()
+
+```
+
+The following code profiles `powers4`.
+
+```{r}
+
+Rprof(memory.profiling = TRUE)
+tmp <- powers4(x, dg)
+Rprof(NULL)
+summaryRprof()
+
+```
+
 # Problem 2
+
+To accomodate other distributions, we need only change the sampling procedure and the plotting of the acceptance region. We make a grid of points and calculate the probabilities of each point coming from each distribution.
 
 ```{r}
 
@@ -26,12 +122,6 @@ S <- rnorm(n, 10.5, 1)
 A <- rnorm(n, 11, 1.5)
 prob <- mean(A < S)
 prob
-
-## plotting the acceptance region
-plot(S[1:1000], A[1:1000])
-polygon(c(10.5, 11.5, 11.5, 10.5),
-	c(10.5, 10.5, 11.5, 10.5),
-        density=10, angle=135)
 
 ## (sqrt) variance of estimate
 se <- sqrt(prob*(1-prob)/n)
