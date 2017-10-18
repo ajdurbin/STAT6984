@@ -234,36 +234,44 @@ Comparing the marginal distributions of the coefficients, we see that the manual
 
 # Problem 4
 
-The spline code from the lecture slides is as follows.
+We generate the data exactly as in class. We then obtain bootstrap samples before using `smooth.spline` with cross-validation to make predictions. We store all of the bootstrap predictions before taking the means and quantiles for plotting. For this code chunk we have to turn off warnings, as `smooth.spline` throws warnings for non-unique samples during cross-validation.
 
-```{r}
+```{r, warning=FALSE}
 
 
 ## non-linear data
 X <- seq(0,10,length=50)
 Ytrue <- (sin(pi*X/5) + 0.2*cos(4*pi*X/5))
 Y <- Ytrue + rnorm(length(Ytrue), sd=0.1)
-plot(X,Y)
 
 ## predictive locations
 XX <- seq(0,10,length=199)
-YYtrue <- (sin(pi*XX/5) + 0.2*cos(4*pi*XX/5))
-lines(XX, YYtrue, col="gray", type="l")
 
-## smoothing splines with 11 DoFs
-fit1 <- smooth.spline(X, Y, df=11)
-YY1 <- as.matrix(predict(fit1, data.frame(X=XX))$y)
-lines(XX, YY1, col=5, lty=5, lwd=2)
-## try/not in slides: higher fidelity
-fit2 <- smooth.spline(X, Y, df=15)
-YY2 <- as.matrix(predict(fit2, data.frame(X=XX))$y)
-lines(XX, YY2, col=6, lty=6, lwd=2)
+## bootstrap iterations
+B <- 1000
 
-## loess smoothing
-fit3 <- loess(Y~X, span=0.5)
-YY1 <- as.matrix(predict(fit3, data.frame(X=XX)))
-lines(XX, YY2, col=7, lty=7, lwd=2)
-legend("topright", c("spline", "loess"),
-       lty=c(5,7), col=c(5,7), lwd=2)
+## storage for predictions
+sto <- matrix(NA, nrow = B, ncol = length(XX))
+
+## bootstrap procedure
+for(i in 1:B){
+  indices <- sample(1:length(X), size = length(X), replace = TRUE)
+  xboot <- X[indices]
+  yboot <- Y[indices]
+  fit <- smooth.spline(x = xboot, y = yboot, cv = TRUE)
+  preds <- predict(fit, XX)
+  sto[i, ] <- preds$y
+}
+
+## get means and quantiles
+pred_mean <- apply(sto, 2, mean)
+pred_low <- apply(sto, 2, function(col) quantile(col, probs = c(0.05)))
+pred_high <- apply(sto, 2, function(col) quantile(col, probs = c(0.95)))
+
+## plots
+plot(X,Y, main = "Bootstrapped Spline With Cross-Validation")
+lines(XX, pred_mean, col = "blue", type = "l", lwd = 2)
+lines(XX, pred_low, col = "red", lty = 6, lwd = 1)
+lines(XX, pred_high, col = "red", lty = 6, lwd = 1)
 
 ```
