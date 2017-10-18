@@ -82,20 +82,27 @@ system.time(powers4(x, dg))
 
 ```
 
-We see that `powers1` is by far the fastest. `powers2` slightly edges out `powers3` and `powers4` is extremely slow.
+We see that `powers2` is by far the fastest. `powers1` is about twice as slow as `powers1`. `powers3` is about four times slower than `powers1` and `powers4` is by far the slowest implimentation.
 
 ## Part C
 
+The next code chunks will profile `powers3` and `powers4`. After each run, we remove `tmp` and use the `gc()` command to return memory back to the operating system in order to better identify CPU and memory usage differences. When knitting this document, profile statements have more noise from the `knitr` processes. To remove this noise, we run the following chunks in the console with no applications besides RStudio and a terminal open.
+
 The following code profiles `powers3`.
 
-```{r}
+```{r, warning=FALSE}
 
 Rprof(memory.profiling = TRUE)
 tmp <- powers3(x, dg)
 Rprof(NULL)
 summaryRprof()
+format(object.size(tmp), units = 'Gb')
+rm(tmp)
+gc()
 
 ```
+
+We see that almost all of the computational effort is spent inside the `outer` function. Also checking `htop` during execution of the above commands in the console, we see CPU usage spike to 100% as well as more than double memory usage from 2.33 Gb to 5.37 Gb, though some of this is certainly due to the returned object size. There are no specific subroutines or functions within `outer` that we can attribute this slow runtime to.
 
 The following code profiles `powers4`.
 
@@ -105,8 +112,13 @@ Rprof(memory.profiling = TRUE)
 tmp <- powers4(x, dg)
 Rprof(NULL)
 summaryRprof()
+format(object.size(tmp), units = 'Gb')
+rm(tmp)
+gc()
 
 ```
+
+Using `htop` during this runtime, we see that memory usage increase from 2.3Gb to over 9Gb. `powers4` is an extremely memory intensive process. CPU usage is also at 100% during execution. There are multiple subroutines within `powers4` that we can arttribute this bottleneck to. As suggest above, the `apply` statement is the most intensive process. Surprisingly, the transpose statement is also intensive. There are also several subroutines that are also computationally intensive, though they are subroutines of the above two statements. The `apply` statement includes the subroutines `FUN`, `aperm.default`, `array`, and `lengths`, of which `FUN` and `aperm.default` are most intensive. The `tranpose` statement includes `matrix`, `array`, and `lengths` subroutines. This operation can be sped up using the `parallel` package with a `parApply` statement, however this may not solve the memory issues.
 
 # Problem 2
 
@@ -177,7 +189,7 @@ for(i in 1:4) {
 
 ```
 
-Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples.
+Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples. We use the same plot statement as above to compare the bootrap samples. 
 
 ```{r}
 
