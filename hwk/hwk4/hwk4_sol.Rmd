@@ -230,7 +230,7 @@ for(i in 1:4) {
 
 ```
 
-Comparing the marginal distributions of the coefficients, we see that the manual and library-based bootrap distributions are nearly identical to each other. However, the $\Beta_1$ coefficients for both methods do not follow the theoretical distribution of the coefficient. This is due to the resampling procedure.
+Comparing the marginal distributions of the coefficients, we see that the manual and library-based bootrap distributions are nearly identical to each other. However, the $\beta_1$ coefficients for both methods do not follow the theoretical distribution of the coefficient. This is due to the resampling procedure.
 
 # Problem 4
 
