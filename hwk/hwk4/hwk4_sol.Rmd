@@ -172,24 +172,10 @@ for(b in 1:B) {
   beta.hat.boot[b,] <- coef(lm(Y[indices]~X[indices,]))
 }
 
-## compare to cov/unscaled above
-cov(beta.hat.boot)
-
-## comparing marginals
-par(mfrow=c(2,2))
-for(i in 1:4) {
-  m <- coef(fit)[i]
-  s <- sqrt(cov(beta.hat.boot)[i,i])
-  x <- m + seq(-4*s, 4*s, length=1000)
-  xlim <- range(c(x, beta.hat.boot[,i]))
-  hist(beta.hat.boot[,i], freq=FALSE, xlim=xlim,
-       xlab=i, main="", breaks=20)
-  lines(x, dnorm(x, m, s), col=2, lwd=2)
-}
 
 ```
 
-Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples. We use the same plot statement as above to compare the bootrap samples. 
+Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples.
 
 ```{r}
 
@@ -203,22 +189,48 @@ reg_coef <- function(data, indices){
 df <- data.frame(Y = Y, X = X)
 bs_reg <- boot(data = df, statistic = reg_coef, R = B)
 
-## compare to cov/unscaled above
+```
+
+We next compare the covariance matrices. 
+
+```{r}
+
+## from fit
+summary(fit)$cov.unscaled
+## manual boot samples
+cov(beta.hat.boot)
+## boot library samples
 cov(bs_reg$t)
 
+```
+
+Comparing the covariance matrices, we see that the covariance matrices of the bootstrap methods are very different from the truth. Comparing the manual and library bootstrap procedures, the covariances of $\beta_3, \beta_1$, $\beta_4, \beta_1$, $\beta_4, \beta_2$, and $\beta_4, \beta_3$ are also very different.
+
+We modify the plot statement used in class to get side-by-side histograms to better compare the manual versus library bootstrapping.
+
+```{r}
+
 ## comparing marginals
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 for(i in 1:4) {
   m <- coef(fit)[i]
-  s <- sqrt(cov(bs_reg$t)[i,i])
-  x <- m + seq(-4*s, 4*s, length=1000)
-  xlim <- range(c(x, bs_reg$t[,i]))
-  hist(bs_reg$t[,i], freq=FALSE, xlim=xlim,
-       xlab=i, main="", breaks=20)
-  lines(x, dnorm(x, m, s), col=2, lwd=2)
+  s1 <- sqrt(cov(beta.hat.boot)[i,i])
+  s2 <- sqrt(cov(bs_reg$t)[i,i])
+  x1 <- m + seq(-4*s1, 4*s1, length=1000)
+  x2 <- m + seq(-4*s2, 4*s2, length=1000)
+  xlim1 <- range(c(x1, beta.hat.boot[,i]))
+  xlim2 <- range(c(x2, bs_reg$t[,i]))
+  hist(beta.hat.boot[,i], freq=FALSE, xlim=xlim1,
+       xlab=i, main="manual", breaks=20)
+  lines(x1, dnorm(x1, m, s1), col=2, lwd=2)
+  hist(bs_reg$t[,i], freq=FALSE, xlim=xlim2,
+       xlab=i, main="library", breaks=20)
+  lines(x2, dnorm(x2, m, s2), col=2, lwd=2)
 }
 
 ```
+
+Comparing the marginal distributions of the coefficients, we see that the manual and library-based bootrap distributions are nearly identical to each other. However, the $\Beta_1$ coefficients for both methods do not follow the theoretical distribution of the coefficient. This is due to the resampling procedure.
 
 # Problem 4
 
