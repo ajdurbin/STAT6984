@@ -14,6 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(boot)
 ```
 
+# 150,2.75,-0.15
+
 # Problem 1
 ## Part A
 
@@ -122,30 +124,29 @@ Using `htop` during this runtime, we see that memory usage increase from 2.3Gb t
 
 # Problem 2
 
-To accomodate other distributions, we need only change the sampling procedure and the plotting of the acceptance region. We make a grid of points and calculate the probabilities of each point coming from each distribution.
+To accomodate other distributions, we need only change the sampling procedure. We use a simple function that takes two arguments, the distributions of both Annie and Sam. We include a couple safety check to ensure that the distributions are the same length.
 
 ```{r}
 
-## probability calculation for A & S
-n <- 1000
-# S <- runif(n, 10, 11.5)
-# A <- runif(n, 10.5, 12)
-S <- rnorm(n, 10.5, 1)
-A <- rnorm(n, 11, 1.5)
-prob <- mean(A < S)
-prob
+as_prob <- function(dista, dists){
+  if(length(dista) != length(dists)){
+    stop('Sample size must be the same for both Annie and Sam.')
+  }
+  
+  S <- dista
+  A <- dists
+  # probability Annie arrives later than Sam
+  prob <- mean(A < S)
+  cat("\nThe probability Annie arrives after Sam is ", prob)
+  #expected differences
+  diff <- A - S
+  cat("\nThe expected difference between arrival times is ", mean(abs(diff)), "\n")
+}
 
-## (sqrt) variance of estimate
-se <- sqrt(prob*(1-prob)/n)
-## normal approximation to binomial
-prob + c(-1,1)*1.96*se
-
-## expected differences
-diff <- A - S
-d <- c(mean(diff), mean(abs(diff)))
-se <- c(sd(diff), sd(abs(diff)))/sqrt(n)
-d[1] + c(-1,1)*1.96*se[1]
-d[2] + c(-1,1)*1.96*se[2]
+as_prob(1:10, rnorm(10,10,1))
+as_prob(runif(1000, 10, 11.5), runif(1000, 10, 12))
+as_prob(rnorm(1000, 10.5, 1), rnorm(1000, 11, 1.5))
+as_prob(1:9, 1:10)
 
 ```
 
