@@ -31,7 +31,7 @@ cat("reps is ", reps, "\n", sep="")
 ##
 
 ## get the data
-spam <- read.csv("../data/spam.csv")
+spam <- read.csv("spam.csv")
 
 ## function for creating CV folds
 cv.folds <- function (n, folds = 10)
