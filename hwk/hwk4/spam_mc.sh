@@ -1,10 +1,14 @@
 #!/bin/bash
 
 var1=$1
-echo you entered $var1
+
+if [[ $# -ne 1 ]]; then
+    echo "TOO MANY ARGUMENTS"
+    exit
+fi
 
 if [[ -n ${var1//[0-9]/} ]]; then
-    echo "NOT A NUMBER"
+    echo "INVALID ARGUMENT"
     exit
 fi
 
