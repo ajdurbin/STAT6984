@@ -77,40 +77,40 @@ for(r in 1:reps) {
     pfull[r,o] <- round(predict(full, newdata=test, type="response"))
 
     ## go forward to get the best model greedily
-    fwd <- suppressWarnings(step(null, scope=formula(full), 
-                            k=log(nt), trace=0))
-    pfwd[r,o] <- round(predict(fwd, newdata=test, type="response"))
-
-    ## now try adding in interactions
-    fwdi <- suppressWarnings(step(fwd, scope=~.+.^2, k=log(nt), trace=0))
-    ## this takes a long time (about an hour on a fast machine)
-    pfwdi[r,o] <- round(predict(fwdi, newdata=test, type="response"))
-
-    ## LDA
-    spam.lda <- lda(spam~., data=train)
-    plda[r,o] <- as.numeric(predict(spam.lda, newdata=test)$class)-1
-
-    ## QDA
-    try({  ## necessary because quadratic expansion may not work
-      spam.qda <- qda(spam~., data=train);
-      pqda[r,o] <- as.numeric(predict(spam.qda, newdata=test)$class)-1
-    }, silent=TRUE)
-
-    ## FDA
-    spam.fda <- fda(spam~., data=train)
-    pfda[r,o] <- as.numeric(predict(spam.fda, newdata=test, type="class"))-1
-
-    ## rpart
-    ## otherwise rpart will do regression
-    train <- transform(train, spam=as.factor(spam))
-    spam.rp <- rpart(spam~., data=train)
-    prp[r,o] <- as.numeric(predict(spam.rp, newdata=test, type="class"))-1
-
-    ## random forests
-    rf <- randomForest(spam~., data=train)
-    prf[r,o] <- as.numeric(predict(rf, newdata=test))-1
-
-    ## save results to a file
+    # fwd <- suppressWarnings(step(null, scope=formula(full), 
+    #                         k=log(nt), trace=0))
+    # pfwd[r,o] <- round(predict(fwd, newdata=test, type="response"))
+    # 
+    # ## now try adding in interactions
+    # fwdi <- suppressWarnings(step(fwd, scope=~.+.^2, k=log(nt), trace=0))
+    # ## this takes a long time (about an hour on a fast machine)
+    # pfwdi[r,o] <- round(predict(fwdi, newdata=test, type="response"))
+    # 
+    # ## LDA
+    # spam.lda <- lda(spam~., data=train)
+    # plda[r,o] <- as.numeric(predict(spam.lda, newdata=test)$class)-1
+    # 
+    # ## QDA
+    # try({  ## necessary because quadratic expansion may not work
+    #   spam.qda <- qda(spam~., data=train);
+    #   pqda[r,o] <- as.numeric(predict(spam.qda, newdata=test)$class)-1
+    # }, silent=TRUE)
+    # 
+    # ## FDA
+    # spam.fda <- fda(spam~., data=train)
+    # pfda[r,o] <- as.numeric(predict(spam.fda, newdata=test, type="class"))-1
+    # 
+    # ## rpart
+    # ## otherwise rpart will do regression
+    # train <- transform(train, spam=as.factor(spam))
+    # spam.rp <- rpart(spam~., data=train)
+    # prp[r,o] <- as.numeric(predict(spam.rp, newdata=test, type="class"))-1
+    # 
+    # ## random forests
+    # rf <- randomForest(spam~., data=train)
+    # prf[r,o] <- as.numeric(predict(rf, newdata=test))-1
+    # 
+    # ## save results to a file
     save(pnull, pfull, pfwd, pfwdi, plda, pqda, pfda, prp, prf, 
          file=paste("spam_", seed, ".RData", sep=""))
   }
