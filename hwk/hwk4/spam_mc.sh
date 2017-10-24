@@ -14,11 +14,20 @@ fi
 if [[ $# -eq 1 ]];
 then
     value=$1
+    # check if an integer
     if [[ -n ${value//[0-9]/} ]];
     then
         echo "INVALID ARGUMENT"
         exit
     fi
+fi
+
+# check if greater than number of cores in machine
+nprc=$(nproc)
+if [[ $value -gt $nprc ]];
+then
+    echo "MORE CORES THAN AVAILABLE - USING 2 CORES"
+    value=2
 fi
 
 # now call r scripts
