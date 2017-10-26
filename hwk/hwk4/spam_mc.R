@@ -42,6 +42,9 @@ pnull <- matrix(NA, nrow=reps, ncol=nrow(spam))
 pfull <- pfwd <- pfwdi <- plda <- pqda <- pnull
 pfda <- prp <- pmnlm <- prf <- pnull
 
+mat_list <- list(pnull, pfull, pfwd, pfwdi, plda, pqda, pnull, pfda, prp, 
+                 pmnlm, prf, pnull)
+
 ## loop over repetitions
 for(r in 1:reps) {
 
