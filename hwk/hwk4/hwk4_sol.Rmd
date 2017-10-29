@@ -14,8 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(boot)
 ```
 
-# 150,2.75,-0.15
-
 # Problem 1
 ## Part A
 
@@ -146,7 +144,7 @@ as_prob <- function(dista, dists){
 as_prob(1:10, rnorm(10,10,1))
 as_prob(runif(1000, 10, 11.5), runif(1000, 10, 12))
 as_prob(rnorm(1000, 10.5, 1), rnorm(1000, 11, 1.5))
-as_prob(1:9, 1:10)
+try({as_prob(1:9, 1:10)})
 
 ```
 
