@@ -43,7 +43,7 @@ df <- data.frame(null=apply(pnulls, 1, hit),
                  rf=apply(prfs, 1, hit))
 
 ## show the data
-boxplot(df[,-1])
+boxplot(df[,-1], main = "Spam Bakeoff Comparison")
 
 ## order by averages and augment table with 
 ## paired t-test
