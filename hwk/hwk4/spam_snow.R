@@ -139,20 +139,26 @@ spam <- read.csv("spam.csv")
 # default cores
 cores <- 4
 
-# R CMD BATCH '--args num_cores=2' spam_mc.R
+# R CMD BATCH '--args cores=2' spam_mc.R
 args <- commandArgs(TRUE)
-if(length(args) > 1){
-  cat("Warning: only specify num_cores argument")
-} else if(length(args) == 0){
-  cat("Warning: num_cores not specified, using 4 cores")
-} else{
-  eval(parse(text=args[[1]]))
-  if(cores > detectCores()){
-    cat("Warning: specified cores greater than logicial cores, using
-        4 cores")
-    cores <- 4
-  }
-}  
+# if(length(args) > 1){
+#   cat("Warning: only specify num_cores argument")
+# } else if(length(args) == 0){
+#   cat("Warning: num_cores not specified, using 4 cores")
+# } else{
+#   eval(parse(text=args[[1]]))
+#   if(cores > detectCores()){
+#     cat("Warning: specified cores greater than logicial cores, using
+#         4 cores")
+#     cores <- 4
+#   }
+# }  
+
+eval(parse(text=args[[1]]))
+if(cores > detectCores()){
+  cat("Warning: specified cores greater than logical cores, using 4 cores")
+  cores <- 4
+}
 
 # make cluster
 cl <- makeCluster(type = "FORK", cores)
