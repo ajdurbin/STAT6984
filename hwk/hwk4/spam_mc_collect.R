@@ -15,7 +15,7 @@ for (i in 1:length(files))
   f <- files[i]
   load(f)
   cat(" ", f, sep="")
-
+  
   ## bind files
   pnulls <- rbind(pnulls, pnull)
   pfulls <- rbind(pfulls, pfull)
@@ -43,7 +43,7 @@ df <- data.frame(null=apply(pnulls, 1, hit),
                  rf=apply(prfs, 1, hit))
 
 ## show the data
-boxplot(df[,-1], main = "Spam Bakeoff Comparison")
+boxplot(df[,-1])
 
 ## order by averages and augment table with 
 ## paired t-test
