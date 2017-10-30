@@ -14,10 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(boot)
 ```
 
-# TODO
-- check covariance matrices, why so different?
-- include figure from batch method
-
 # Problem 1
 ## Part A
 
@@ -178,7 +174,7 @@ for(b in 1:B) {
 
 ```
 
-Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` in order to get the regression coefficients from the bootstrap samples.
+Our code using the `boot` library is as follows. We need to define a 'statistic' in the `boot` library in order to get the regression coefficients from the bootstrap samples.
 
 ```{r}
 
@@ -207,7 +203,20 @@ cov(bs_reg$t)
 
 ```
 
-Comparing the covariance matrices, we see that the covariance matrices of the bootstrap methods are very different from the truth. Comparing the manual and library bootstrap procedures, the covariances of $\beta_3, \beta_1$, $\beta_4, \beta_1$, $\beta_4, \beta_2$, and $\beta_4, \beta_3$ are also very different.
+We take differences between the covariance matrices to better identify their differences.
+
+```{r}
+
+# truth vs manual
+summary(fit)$cov.unscaled - cov(beta.hat.boot)
+# truth vs library
+summary(fit)$cov.unscaled - cov(bs_reg$t)
+# manual vs library
+cov(beta.hat.boot) - cov(bs_reg$t)
+
+```
+
+So that while the covarainces matrices are not exact between the truth, manual bootstrap, and library bootstrap, the differences are small.
 
 We modify the plot statement used in class to get side-by-side histograms to better compare the manual versus library bootstrapping.
 
@@ -326,11 +335,31 @@ done
 
 ```
 
-For the following boxplots, we used the batch method of 32 repetitions.
+For the following boxplots, we used the batch method of 32 repetitions and the bash script method across 4 cores of 8 repetitions each.
+
+The following is the pairwise t-test results.
+
+```{r, eval=FALSE}
+
+        dfmean           tt
+rf   0.9519670 8.777168e-21
+fwdi 0.9329168 7.934943e-09
+full 0.9235601 1.124757e-03
+fwd  0.9202021 1.552431e-20
+rp   0.8939144 8.608004e-09
+fda  0.8866768 1.649384e-01
+lda  0.8866659 2.290342e-26
+qda  0.8298929 2.061578e-37
+null 0.6059552           NA
+
+```
+
+![Spam bakeoff results.](spam.png)
+
 
 # Problem 5
 
-The contents of `spam_snow.sh` are as follows. We check the number of arguments within the bash script and then check the cores argument within `spam_snow.R`. For `spam_snow.R`, we use `clusterApply()` with the class version of `spam_mc.R` as a function.
+The contents of `spam_snow.sh` are as follows. We check the number of arguments within the bash script and then check the cores argument within `spam_snow.R`. For `spam_snow.R`, we use `clusterApply()` with the class version of `spam_mc.R` slightly modified as into a function. Note that function `unpack` was developed with Chris Grubb in this solution.
 
 ```{r, eval = FALSE}
 
@@ -351,3 +380,4 @@ fi
 R CMD BATCH "--args cores=$value" spam_snow.R
 
 ```
+

@@ -15,6 +15,9 @@ cv.folds <- function (n, folds = 10) {
 }
 
 # unpack list after parallel
+# takes list of lists from spam_mc
+# rbinds corresponding matricies together
+# returns list of matrices for each method
 unpack <- function(par_reps){
   # get names of each matrix
   unique_names <- names(par_reps[[1]])
@@ -42,15 +45,20 @@ unpack <- function(par_reps){
 
 # basically same code from class wrapped in function
 # looping slightly different though
-spam_mc <- function(reps, spam){
+# vec is a vector of indicies from splt_reps
+# but we don't care what the actual indicies are, just that a given core
+# is to do that many total repetitions
+# returns list of lists
+# sublists are named matricies for each method
+spam_mc <- function(vec, spam){
   
   # dynamic storage
-  pnull <- matrix(NA, nrow = length(reps), ncol = nrow(spam))
+  pnull <- matrix(NA, nrow = length(vec), ncol = nrow(spam))
   pfull <- pfwd <- pfwdi <- plda <- pqda <- pnull
   pfda <- prp <- pmnlm <- prf <- pnull
   
   # loop over repetitions
-  for(r in 1:length(reps)) {
+  for(r in 1:length(vec)) {
     
     # generate CV folds
     all.folds <- cv.folds(nrow(spam), folds = 5)
@@ -59,8 +67,8 @@ spam_mc <- function(reps, spam){
     for(i in 1:length(all.folds)) {
       
       # get the ith fold, and print progress
-      o <- all.folds[[i]]
-      cat("(r,i) = (", r, ",", i, ")\n", sep = "")
+      # o <- all.folds[[i]]
+      # cat("(r,i) = (", r, ",", i, ")\n", sep = "")
       
       # training and testing set
       test <- spam[o, ]
@@ -126,7 +134,9 @@ spam_mc <- function(reps, spam){
   
   # list object of each matrix
   # need to unlist and recombine after
-  pckg <- list(pnull = pnull, plda = plda, prp = prp)
+  pckg <- list(pnull = pnull, pfull = pfull, pfwd = pfwd, pfwdi = pfwdi,
+               plda = plda, pqda = pqda, pfda = pfda, prp = prp, 
+               pmnlm = pmnlm, prf = prf)
   return(pckg)
   
 }
@@ -137,7 +147,8 @@ spam_mc <- function(reps, spam){
 
 spam <- read.csv("spam.csv")
 
-# R CMD BATCH '--args cores=2' spam_mc.R
+# validate arguments
+# R CMD BATCH '--args cores=x' spam_mc.R
 args <- commandArgs(TRUE)
 eval(parse(text=args[[1]]))
 if(cores > detectCores()){
@@ -150,10 +161,14 @@ cl <- makeCluster(type = "FORK", cores)
 total_reps <- 40
 
 # split repetition to parallelize as in class
+# splt_reps is a list of indicies for each core
 reps <- 1:total_reps
 suppressWarnings(splt_reps <- split(reps, 1:cores))
 
 # run in parallel
+# returns a list of lists
+# first list is core
+# sublists are matricies from spam_mc function
 par_reps <- clusterApply(cl, splt_reps, spam_mc, spam)
 stopCluster(cl)
 
