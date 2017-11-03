@@ -173,16 +173,15 @@ void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     /* convert Y,D back to matrices */
     double **Y;
     double **D;
-    D = (int **) (malloc(sizeof(int *) * (*m_in));
+    D = (int **) malloc(sizeof(int*) * (*m_in));
     D[0] = D_in;
     for(i = 1; i < *m_in; i++) D[i] = D[i - 1] + *m_in;
-    Y = (int **) (malloc(sizeof(int *) * (*n_in));
+    Y = (int **) malloc(sizeof(int*) * (*n_in));
     Y[0] = Y_in;
     for(j = 1; j < *n_in; j++) Y[i] = Y[i - 1] + *n_in;
 
     /* call logliks */
-    *as_out = logliks(int n_in, int m_in, double **Y, double **D,
-        double *theta_in, int tlen_in, int verb_in);
+    logliks(*n_in, m_in, Y, D, theta_in, *tlen_in, *verb_in, as_out);
 
     /* free memory back */
     free(D);
