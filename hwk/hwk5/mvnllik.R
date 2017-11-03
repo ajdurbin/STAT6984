@@ -78,3 +78,7 @@ logliks <- function(Y, D, thetas, verb = 0){
      return(ret$aS)
 
 }
+
+# load shared object
+dyn.load("clect.so")
+
