@@ -58,21 +58,22 @@ logliks.R <- function(Y, D, thetas, verb=0, ll=loglik)
 # R interface to C version
 logliks <- function(Y, D, thetas, verb = 0){
 
-    m <- ncol(D)
+    m <- ncol(Y)
     n <- nrow(Y)
     tlen <- length(thetas)
+    out <- rep(0, tlen)
     
     # insert object checks later
 
     ret <- .C("logliks_R",
-              n = n,
-              m = m, 
+              n = as.integer(n),
+              m = as.integer(m), 
               Y = as.double(t(Y)),
               D = as.double(t(D)),
               thetas = as.double(thetas),
               tlen = as.integer(tlen),
               verb = as.integer(verb),
-              out = as.double(rep(0, tlen)),
+              out = as.double(out),
               DUP = FALSE)
 
      return(ret$out)

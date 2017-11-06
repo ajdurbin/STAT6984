@@ -165,7 +165,7 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 
 /* C interface for logliks */
 void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
-    double *theta_in, int *tlen_in, int *verb_in, double *as_out){
+    double *theta_in, int *tlen_in, int *verb_in, double *out){
 
     unsigned int i;
     unsigned int j;
@@ -173,15 +173,15 @@ void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     /* convert Y,D back to matrices */
     double **Y;
     double **D;
-    D = (int **) malloc(sizeof(int*) * (*m_in));
+    D = (double **) malloc(sizeof(double*) * (*m_in));
     D[0] = D_in;
-    for(i = 1; i < *m_in; i++) D[i] = D[i - 1] + *m_in;
-    Y = (int **) malloc(sizeof(int*) * (*n_in));
+    for(i=1; i<*m_in; i++) D[i] = D[i - 1] + *m_in;
+    Y = (double **) malloc(sizeof(double*) * (*n_in));
     Y[0] = Y_in;
-    for(j = 1; j < *n_in; j++) Y[i] = Y[i - 1] + *n_in;
+    for(j=1; j<*n_in; j++) Y[j] = Y[j - 1] + *n_in;
 
     /* call logliks */
-    logliks(*n_in, *m_in, Y, D, theta_in, *tlen_in, *verb_in, as_out);
+    logliks(*n_in, *m_in, Y, D, theta_in, *tlen_in, *verb_in, out);
 
     /* free memory back */
     free(D);
