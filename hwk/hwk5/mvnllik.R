@@ -64,18 +64,18 @@ logliks <- function(Y, D, thetas, verb = 0){
     
     # insert object checks later
 
-    ret <- .C("logliks",
+    ret <- .C("logliks_R",
               n = n,
               m = m, 
-              Y = as.numeric(t(Y)),
-              D = as.numeric(t(D)),
-              thetas = as.numeric(thetas),
+              Y = as.double(t(Y)),
+              D = as.double(t(D)),
+              thetas = as.double(thetas),
               tlen = as.integer(tlen),
               verb = as.integer(verb),
-              aS = double(1),
+              out = as.double(rep(0, tlen)),
               DUP = FALSE)
 
-     return(ret$aS)
+     return(ret$out)
 
 }
 

@@ -181,7 +181,7 @@ void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     for(j = 1; j < *n_in; j++) Y[i] = Y[i - 1] + *n_in;
 
     /* call logliks */
-    logliks(*n_in, m_in, Y, D, theta_in, *tlen_in, *verb_in, as_out);
+    logliks(*n_in, *m_in, Y, D, theta_in, *tlen_in, *verb_in, as_out);
 
     /* free memory back */
     free(D);
