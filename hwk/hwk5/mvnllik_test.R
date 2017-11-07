@@ -9,4 +9,4 @@ library(mvtnorm)
 Y <- rmvnorm(10000, sigma = Sigma)
 
 # run 
-ll <- logliks(Y, D, thetas, verb = 0)
+ll <- logliks(Y, D, thetas, verb = 1)

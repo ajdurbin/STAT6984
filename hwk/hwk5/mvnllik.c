@@ -149,6 +149,7 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 
 		/* calculate quadratic form */
 		qf = 0.0;
+        //#pragma omp parallel for private(i)
 		for(i=0; i<n; i++) {
 			dsymv(&upper,&m,&d_one,*Ki,&m,Y[i],&i_one,&d_zero,KiY,&i_one);
 			qf += ddot(&m,KiY,&i_one,Y[i],&i_one);

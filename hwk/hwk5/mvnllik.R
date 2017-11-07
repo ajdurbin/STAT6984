@@ -61,7 +61,7 @@ logliks <- function(Y, D, thetas, verb = 0){
     m <- ncol(Y)
     n <- nrow(Y)
     tlen <- length(thetas)
-    out <- rep(0, tlen)
+    out <- rep(0.01, tlen)
     
     # insert object checks later
 
