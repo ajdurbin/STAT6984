@@ -265,4 +265,3 @@ void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     free(Y);
 
 }
-
