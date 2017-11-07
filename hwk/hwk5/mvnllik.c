@@ -178,7 +178,7 @@ void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     for(i=1; i<*m_in; i++) D[i] = D[i - 1] + *m_in;
     Y = (double **) malloc(sizeof(double*) * (*n_in));
     Y[0] = Y_in;
-    for(j=1; j<*n_in; j++) Y[j] = Y[j - 1] + *n_in;
+    for(j=1; j<*n_in; j++) Y[j] = Y[j - 1] + *m_in;
 
     /* call logliks */
     logliks(*n_in, *m_in, Y, D, theta_in, *tlen_in, *verb_in, out);
