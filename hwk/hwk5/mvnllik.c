@@ -1,7 +1,6 @@
 #include <R_ext/Utils.h>
 #include <R.h>
 #include <Rmath.h>
-
 # ifdef _OPENMP
 #include <omp.h>
 # endif
@@ -110,7 +109,6 @@ double ** new_matrix(int n1, int n2)
 
 #ifdef _OPENMP
 
-// parallel loglik
 /*
  * loglik:
  *
@@ -133,7 +131,6 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 	KiY = (double*) malloc(sizeof(double) *m);
 
 	/* loop over thetas */
-    /* parallel version */
     #pragma omp parallel for private(t)
 	for(t=0; t<tlen; t++) {
 
@@ -161,19 +158,22 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 		llik[t] -= 0.5*qf;
 
 		/* progress meter */
-		//if(verb > 0 && (t+1) % verb == 0) 
-			//printf("t=%d, ll=%g\n", t+1, llik[t]);
+		if(verb > 0 && (t+1) % verb == 0) 
+			printf("t=%d, ll=%g\n", t+1, llik[t]);
+
 	}
 
 	/* clean up */
 	delete_matrix(K);
 	delete_matrix(Ki);
 	free(KiY);
+
+    //test
+    printf("\nparallel\n");
 }
 
 #else
 
-// serial loglik
 /*
  * loglik:
  *
@@ -224,17 +224,22 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 		/* progress meter */
 		if(verb > 0 && (t+1) % verb == 0) 
 			printf("t=%d, ll=%g\n", t+1, llik[t]);
+        
 	}
 
 	/* clean up */
 	delete_matrix(K);
 	delete_matrix(Ki);
 	free(KiY);
+
+    //test
+    printf("\nnot parallel\n");
 }
 
 #endif
 
 /* C interface for logliks */
+
 void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
     double *theta_in, int *tlen_in, int *verb_in, double *out){
 

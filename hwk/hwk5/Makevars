@@ -1,4 +1,4 @@
 # to compile clect.so:
 # R CMD SHLIB -o clect.so *.c
-PKG_CFLAGS = ## -fopenmp ## -Wall -pedantic
-PKG_LIBS = ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} ## -lgomp
+PKG_CFLAGS = ##-fopenmp ## -Wall -pedantic
+PKG_LIBS = ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} ##-lgomp
