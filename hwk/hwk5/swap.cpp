@@ -36,3 +36,12 @@ system.time(swap.eval())
 print(v[1])
 print(v[2])
 */
+
+// [[Rcpp::export]]
+NumericVector logliks_Rcpp(NumericMatrix Y, NumericMatrix D, NumericVector thetas){
+  
+  NumericVector Sigma;
+  Sigma = exp( -D/thetas );
+  return(Sigma);
+  
+}

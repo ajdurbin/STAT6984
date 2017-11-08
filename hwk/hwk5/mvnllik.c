@@ -120,57 +120,66 @@ double ** new_matrix(int n1, int n2)
 void logliks(int n, int m, double **Y, double **D, double *theta, 
 	int tlen, int verb, double *llik)
 {
-	double **K, **Ki;
-	double *KiY;
-	int i, j, t;
-	double ldet, qf;
-
-	/* create space */
-	K = new_matrix(m, m);
-	Ki = new_matrix(m, m);
-	KiY = (double*) malloc(sizeof(double) *m);
-
-	/* loop over thetas */
-    #pragma omp parallel for private(t)
-	for(t=0; t<tlen; t++) {
-
-		/* build covariance matrix */
-		for(i=0; i<m; i++) {
-			K[i][i] = 1.0 + SDEPS;
-			for(j=i+1; j<m; j++)
-				K[i][j] = K[j][i] = exp(0.0-D[i][j]/theta[t]);
-		}
-
-		/* calculate inverse and determinant*/
-		ldet = invdet(m, K, Ki);
-
-		/* initialize log likelihood calculation */
-		llik[t] =  0.0 - n*(m*M_LN_SQRT_2PI + 0.5*ldet);
-
-		/* calculate quadratic form */
-		qf = 0.0;
-        //#pragma omp parallel for private(i)
-		for(i=0; i<n; i++) {
-			dsymv(&upper,&m,&d_one,*Ki,&m,Y[i],&i_one,&d_zero,KiY,&i_one);
-			qf += ddot(&m,KiY,&i_one,Y[i],&i_one);
-		}
-
-		/* finish log likelihood calculation */
-		llik[t] -= 0.5*qf;
-
-		/* progress meter */
-		if(verb > 0 && (t+1) % verb == 0) 
-			printf("t=%d, ll=%g\n", t+1, llik[t]);
-
-	}
-
-	/* clean up */
-	delete_matrix(K);
-	delete_matrix(Ki);
-	free(KiY);
-
+  
+#pragma omp parallel{
+  
+  int me, nth;
+  me = omp_get_thread_num();
+  nth = omp_get_num_threads();
+  
+  double **K, **Ki;
+  double *KiY;
+  int i, j, t;
+  double ldet, qf;
+  
+  /* create space */
+  K = new_matrix(m, m);
+  Ki = new_matrix(m, m);
+  KiY = (double*) malloc(sizeof(double) *m);
+  
+  /* loop over thetas */
+  for(t=me; t<tlen; t+=nth) {
+    
+    /* build covariance matrix */
+    for(i=0; i<m; i++) {
+      K[i][i] = 1.0 + SDEPS;
+      for(j=i+1; j<m; j++)
+        K[i][j] = K[j][i] = exp(0.0-D[i][j]/theta[t]);
+    }
+    
+    /* calculate inverse and determinant*/
+    ldet = invdet(m, K, Ki);
+    
+    /* initialize log likelihood calculation */
+    llik[t] =  0.0 - n*(m*M_LN_SQRT_2PI + 0.5*ldet);
+    
+    /* calculate quadratic form */
+    qf = 0.0;
+    //#pragma omp parallel for private(i)
+    for(i=0; i<n; i++) {
+      dsymv(&upper,&m,&d_one,*Ki,&m,Y[i],&i_one,&d_zero,KiY,&i_one);
+      qf += ddot(&m,KiY,&i_one,Y[i],&i_one);
+    }
+    
+    /* finish log likelihood calculation */
+    llik[t] -= 0.5*qf;
+    
+    /* progress meter */
+    if(verb > 0 && (t+1) % verb == 0) 
+      printf("t=%d, ll=%g\n", t+1, llik[t]);
+    
+  }
+  
+  /* clean up */
+  delete_matrix(K);
+  delete_matrix(Ki);
+  free(KiY);
+  
+}
+	
     //test
     printf("\nparallel\n");
+
 }
 
 #else
