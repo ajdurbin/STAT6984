@@ -9,4 +9,7 @@ library(mvtnorm)
 Y <- rmvnorm(10000, sigma = Sigma)
 
 # run 
-ll <- logliks(Y, D, thetas, verb = 1)
+ll_c <- logliks(Y, D, thetas, verb = 1)
+ll_R <- logliks.R(Y, D, thetas, verb = 1)
+cat("\nR and C Versions Equal:\n", all.equal(ll_c,ll_R), "\n")
+

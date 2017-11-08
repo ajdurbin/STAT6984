@@ -121,7 +121,8 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 	int tlen, int verb, double *llik)
 {
   
-#pragma omp parallel{
+#pragma omp parallel
+{
   
   int me, nth;
   me = omp_get_thread_num();
