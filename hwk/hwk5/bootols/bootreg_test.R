@@ -33,9 +33,13 @@ source("bootreg.R")
 
 # alex's test
 n <- 5000
-d <- 200
+d <- 100
 X <- 1/matrix(rt(n*d, df=1), ncol=d)
 beta <- c(1:d, 0)
 Y <- beta[1] + X %*% beta[-1] + rnorm(100, sd=3)
+system.time(beta.Csolve <- bootols(X, Y, B=1000))
 system.time(beta.Rsolve <- bootols.R(X, Y, B=1000, method="solve"))
-
+cvar <- var(beta.Csolve)
+rvar <- var(beta.Rsolve)
+dif <- cvar - rvar
+cat("\nR and C Versions Equal:\n", range(dif), "\n")
