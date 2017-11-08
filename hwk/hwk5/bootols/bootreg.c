@@ -173,9 +173,13 @@ void ols_R(double *X_in, double *Y_in, int *n_in, int *m_in,
 void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_hat) 
 {
   
-#pramga omp parallel
+#pragma omp parallel
   {
   
+    int me, nth;
+    me = omp_get_thread_num();
+    nth = omp_get_num_threads();
+
     int b, i, j, bindex;
     double **Xb, **XtX, **XtXi;
     double *XtY, *Yb;
@@ -186,11 +190,11 @@ void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_
       XtY = (double*) malloc(sizeof(double) * m);
       XtXi = new_matrix(m, m);
     } else { XtY = NULL; XtXi = NULL; }
-    //Xb = new_matrix(n, m);
-    //Yb = (double*) malloc(sizeof(double) * n);	
+    Xb = new_matrix(n, m);
+    Yb = (double*) malloc(sizeof(double) * n);	
     
     /* loop over bootstrap rounds */
-    for(b=0; b<B; b++) {/* fill Xb and Yb */
+    for(b=me; b<B; b+=nth) {/* fill Xb and Yb */
     for(i=0; i<n; i++) {
       bindex = floor(n * unif_rand()); /* R's RNG */
     Yb[i] = Y[bindex];
