@@ -40,22 +40,6 @@ print(v[2])
 system.time(swap.eval())
 print(v[1])
 print(v[2])
+
 */
 
-// NumericVector logliks_Rcpp(NumericMatrix Y, NumericMatrix D, NumericVector thetas){
-//   
-//   int m = D.nrow();
-//   NumericVector Sigma;
-//   Sigma = exp(-D/thetas);
-//   NumericMatrix Schol;
-//   Schol = arma::chol(Sigma);
-//   return(Sigma);
-//   
-// }
-
-// [[Rcpp::export]]
-arma::mat mvrnormArma(int n, arma::vec mu, arma::mat sigma) {
-  int ncols = sigma.n_cols;
-  arma::mat Y = arma::randn(n, ncols);
-  return arma::repmat(mu, 1, n).t() + Y * arma::chol(sigma);
-}
