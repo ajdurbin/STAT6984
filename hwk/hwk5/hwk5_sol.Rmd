@@ -8,6 +8,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 ```
 
 # Problem 1
@@ -230,6 +231,57 @@ void logliks(int n, int m, double **Y, double **D, double *theta,
 ## Part C and Part D
 
 For this problem, we ran the likelihood implimentations at different times and saved the results in `.RData` files for later plotting. Both `R` versions and the non-parallel `C` version were run on a local machine at the same time. The parallel `C` version was run on a local machine after a re-compilation with the appropriate `OpenMP` flags.
+
+```{r}
+
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/data.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_serial.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_omp.RData")
+
+```
+
+Timing comparisons are as follows. Note that the `OpenMP` `C` implimentation used 4 cores on a local machine.
+
+```{r}
+
+ll_1_time
+ll_2_time
+ll_c_serial_time
+ll_c_omp_time
+
+```
+
+We see that both `C` implimentations are the fastest, with the `OpenMP` implimentation four times faster than without. `loglik2` is twice as slow as `loglik` and `logliks`.
+
+```{r}
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_1)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("loglik")
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_2)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("loglik2")
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_c_serial)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("logliks")
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_c_omp)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("logliks with omp")
+
+```
+
+We see that all four implimentations have the same likelihood curve and achieve the same maximum, thus the implimentations are equivalent.
 
 ## Part E
 
