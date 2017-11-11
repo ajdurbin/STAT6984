@@ -81,5 +81,5 @@ logliks <- function(Y, D, thetas, verb = 0){
 }
 
 # load shared object
-dyn.load("clect.so")
+dyn.load("../src/clect.so")
 

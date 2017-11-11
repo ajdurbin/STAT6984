@@ -1,15 +1,7 @@
-source("mvnllik.R")
-
+library(mvtnorm)
 thetas <- seq(0.1, 3, length = 100)
-
 X <- runif(300, -1, 1)
 D <- as.matrix(dist(matrix(X, ncol = 1), diag = TRUE, upper = TRUE))
 Sigma <- exp(-D) + diag(sqrt(.Machine$double.eps), nrow(D))
-library(mvtnorm)
 Y <- rmvnorm(10000, sigma = Sigma)
-
-# run 
-ll_c <- logliks(Y, D, thetas, verb = 1)
-ll_R <- logliks.R(Y, D, thetas, verb = 1)
-cat("\nR and C Versions Equal:\n", all.equal(ll_c,ll_R), "\n")
-
+save(thetas, X, D, Sigma, Y, file = "data.RData")

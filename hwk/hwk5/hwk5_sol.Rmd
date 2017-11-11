@@ -1,0 +1,328 @@
+---
+title: "Homework 5"
+subtitle: "Advanced Statistical Computing"
+author: "Alexander Durbin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1
+
+## Part A
+
+The contents of our `R` interface is as follows.
+
+```{r, eval=FALSE}
+
+# logliks
+# R interface to C version
+logliks <- function(Y, D, thetas, verb = 0){
+
+    m <- ncol(Y)
+    n <- nrow(Y)
+    tlen <- length(thetas)
+    out <- rep(0.01, tlen)
+    
+    ret <- .C("logliks_R",
+              n = as.integer(n),
+              m = as.integer(m), 
+              Y = as.double(t(Y)),
+              D = as.double(t(D)),
+              thetas = as.double(thetas),
+              tlen = as.integer(tlen),
+              verb = as.integer(verb),
+              out = as.double(out),
+              DUP = FALSE)
+
+     return(ret$out)
+
+}
+
+```
+
+The following code is the matching `C` interface.
+
+```{r, eval=FALSE}
+
+/* C interface for logliks */
+
+void logliks_R(int *n_in, int *m_in, double *Y_in, double *D_in,
+    double *theta_in, int *tlen_in, int *verb_in, double *out){
+
+    unsigned int i;
+    unsigned int j;
+
+    /* convert Y,D back to matrices */
+    double **Y;
+    double **D;
+    D = (double **) malloc(sizeof(double*) * (*m_in));
+    D[0] = D_in;
+    for(i=1; i<*m_in; i++) D[i] = D[i - 1] + *m_in;
+    Y = (double **) malloc(sizeof(double*) * (*n_in));
+    Y[0] = Y_in;
+    for(j=1; j<*n_in; j++) Y[j] = Y[j - 1] + *m_in;
+
+    /* call logliks */
+    logliks(*n_in, *m_in, Y, D, theta_in, *tlen_in, *verb_in, out);
+
+    /* free memory back */
+    free(D);
+    free(Y);
+
+}
+
+```
+
+## Part B
+
+We extend the `C` version to use `OpenMP` parallelization in the following code, where we have two definitions of `loglik` depending on if the `OpenMP` flags were set during compilation.
+
+```{r, eval=FALSE}
+
+#ifdef _OPENMP
+
+/*
+ * loglik:
+ *
+ * calculates log likelihood for a multivariate normal distribution over 
+ * a vector of theta values of length tlen used to define the covariance
+ * structure; if D is m x m, then Y should be n x m.
+ */
+
+void logliks(int n, int m, double **Y, double **D, double *theta, 
+	int tlen, int verb, double *llik)
+{
+  
+#pragma omp parallel
+{
+  
+  int me, nth;
+  me = omp_get_thread_num();
+  nth = omp_get_num_threads();
+  
+  double **K, **Ki;
+  double *KiY;
+  int i, j, t;
+  double ldet, qf;
+  
+  /* create space */
+  K = new_matrix(m, m);
+  Ki = new_matrix(m, m);
+  KiY = (double*) malloc(sizeof(double) *m);
+  
+  /* loop over thetas */
+  for(t=me; t<tlen; t+=nth) {
+    
+    /* build covariance matrix */
+    for(i=0; i<m; i++) {
+      K[i][i] = 1.0 + SDEPS;
+      for(j=i+1; j<m; j++)
+        K[i][j] = K[j][i] = exp(0.0-D[i][j]/theta[t]);
+    }
+    
+    /* calculate inverse and determinant*/
+    ldet = invdet(m, K, Ki);
+    
+    /* initialize log likelihood calculation */
+    llik[t] =  0.0 - n*(m*M_LN_SQRT_2PI + 0.5*ldet);
+    
+    /* calculate quadratic form */
+    qf = 0.0;
+    //#pragma omp parallel for private(i)
+    for(i=0; i<n; i++) {
+      dsymv(&upper,&m,&d_one,*Ki,&m,Y[i],&i_one,&d_zero,KiY,&i_one);
+      qf += ddot(&m,KiY,&i_one,Y[i],&i_one);
+    }
+    
+    /* finish log likelihood calculation */
+    llik[t] -= 0.5*qf;
+    
+    /* progress meter */
+    if(verb > 0 && (t+1) % verb == 0) 
+      printf("t=%d, ll=%g\n", t+1, llik[t]);
+    
+  }
+  
+  /* clean up */
+  delete_matrix(K);
+  delete_matrix(Ki);
+  free(KiY);
+  
+}
+	
+    //test
+    printf("\nparallel\n");
+
+}
+
+#else
+
+/*
+ * loglik:
+ *
+ * calculates log likelihood for a multivariate normal distribution over 
+ * a vector of theta values of length tlen used to define the covariance
+ * structure; if D is m x m, then Y should be n x m.
+ */
+
+void logliks(int n, int m, double **Y, double **D, double *theta, 
+	int tlen, int verb, double *llik)
+{
+	double **K, **Ki;
+	double *KiY;
+	int i, j, t;
+	double ldet, qf;
+
+	/* create space */
+	K = new_matrix(m, m);
+	Ki = new_matrix(m, m);
+	KiY = (double*) malloc(sizeof(double) *m);
+
+	/* loop over thetas */
+	for(t=0; t<tlen; t++) {
+
+		/* build covariance matrix */
+		for(i=0; i<m; i++) {
+			K[i][i] = 1.0 + SDEPS;
+			for(j=i+1; j<m; j++)
+				K[i][j] = K[j][i] = exp(0.0-D[i][j]/theta[t]);
+		}
+
+		/* calculate inverse and determinant*/
+		ldet = invdet(m, K, Ki);
+
+		/* initialize log likelihood calculation */
+		llik[t] =  0.0 - n*(m*M_LN_SQRT_2PI + 0.5*ldet);
+
+		/* calculate quadratic form */
+		qf = 0.0;
+		for(i=0; i<n; i++) {
+			dsymv(&upper,&m,&d_one,*Ki,&m,Y[i],&i_one,&d_zero,KiY,&i_one);
+			qf += ddot(&m,KiY,&i_one,Y[i],&i_one);
+		}
+
+		/* finish log likelihood calculation */
+		llik[t] -= 0.5*qf;
+
+		/* progress meter */
+		if(verb > 0 && (t+1) % verb == 0) 
+			printf("t=%d, ll=%g\n", t+1, llik[t]);
+        
+	}
+
+	/* clean up */
+	delete_matrix(K);
+	delete_matrix(Ki);
+	free(KiY);
+
+    //test
+    printf("\nnot parallel\n");
+}
+
+#endif
+
+```
+
+## Part C and Part D
+
+For this problem, we ran the likelihood implimentations at different times and saved the results in `.RData` files for later plotting. Both `R` versions and the non-parallel `C` version were run on a local machine at the same time. The parallel `C` version was run on a local machine after a re-compilation with the appropriate `OpenMP` flags.
+
+## Part E
+
+Similar to Part C and Part D, the different implimentations were run at different times with results saved similarly. However, for using the `MKL` libraries, this code was run on Virginia Tech's ARC machines.
+
+# Problem 2
+
+Again, similar to #1, code was run locally and remotely with intermediate saving.
+
+# Problem 3
+
+The contents of `swap.cpp` is as follows. Note that we can easily modify the types of `v` and `tmp` accordingly.
+
+```{r, eval=FALSE}
+
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+void swap_Rcpp(IntegerVector& v, int i, int j){
+  
+  int tmp;
+  tmp = v[i];
+  v[i] = v[j];
+  v[j] = tmp;
+  
+}
+
+```
+
+`swap.eval` is the following code.
+
+```{r}
+
+swap.eval <- function()
+{
+  e <- quote({tmp <- v[i]; v[i] <- v[j]; v[j] <- tmp})
+  eval(e, envir=parent.frame())
+}
+
+```
+
+We compare the previous implimentations as follows. Recall that indicies start at 0 in `C++`.
+
+```{r}
+
+Rcpp::sourceCpp('rcpp/swap.cpp')
+
+v <- 1:1000000000
+
+print(v[1])
+print(v[2])
+
+system.time(swap_Rcpp(v, 0, 1))
+
+print(v[1])
+print(v[2])
+
+system.time(swap_Rcpp(v, 0, 1))
+
+print(v[1])
+print(v[2])
+
+system.time(swap_Rcpp(v, 0, 1))
+
+print(v[1])
+print(v[2])
+
+i <- 1
+j <- 2
+
+print(v[1])
+print(v[2])
+
+system.time(swap.eval())
+
+print(v[1])
+print(v[2])
+
+system.time(swap.eval())
+
+print(v[1])
+print(v[2])
+
+system.time(swap.eval())
+
+print(v[1])
+print(v[2])
+
+```
+
+`swap_Rcpp` initially faster than `swap.eval`, but for the latter two runs, they are comparable. The first run of `swap.eval` is very slow before being instantaneous. We aren't sure what to attribute this result to.
+
+# Problem 4
+
+Again, we run code intermediately and across machines for good comparisons. The contents of `loglik.cpp` are as follows. 
