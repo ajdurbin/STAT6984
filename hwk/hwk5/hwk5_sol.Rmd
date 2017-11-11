@@ -234,6 +234,7 @@ For this problem, we ran the likelihood implimentations at different times and s
 
 ```{r}
 
+rm(list = ls())
 load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/data.RData")
 load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_serial.RData")
 load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_omp.RData")
@@ -340,6 +341,43 @@ bootols <- function(X, y, B=199, icept=TRUE, inv=FALSE)
 
 ```{r, eval=FALSE}
 
+/*
+ * bootols_R:
+ *
+ * bootstrap R interface to ols()
+ */
+
+void bootols_R(double *X_in, double *Y_in, int *n_in, int *m_in, 
+	           int *B_in, int *inv_in, double *beta_hat_out)
+{
+	int i;
+	double **X, **beta_hat;
+
+   	/* change a vector representation of X into a array one */
+   	X = (double **) malloc(sizeof(double*) * (*n_in));
+   	X[0] = X_in;
+   	for(i=1; i<*n_in; i++) X[i] = X[i-1] + *m_in;
+
+   	/* change a vector representation of beta_hat_out into a array one */
+   	beta_hat = (double **) malloc(sizeof(double*) * (*B_in));
+   	beta_hat[0] = beta_hat_out;
+   	for(i=1; i<*B_in; i++) beta_hat[i] = beta_hat[i-1] + *m_in;
+
+   	/* for R's RNG */
+   	GetRNGstate();
+
+   	/* call the C-side subroutine */
+   	bootols(X, Y_in, *n_in, *m_in, *B_in, *inv_in, beta_hat);
+
+   	/* for R's RNG */
+   	PutRNGstate();
+
+   	/* clean up */
+   	free(X);
+   	free(beta_hat);
+}
+
+
 #ifdef _OPENMP
 
 /*
@@ -442,6 +480,17 @@ void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_
 
 ```
 
+```{r}
+
+rm(list = ls())
+load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/remote_serial.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/remote_omp.RData")
+ls()
+c(remote_cinv_time, remote_cinv_time_omp)
+c(remote_csolve_time, remote_csolve_time_omp)
+
+```
+
 # Problem 3
 
 The contents of `swap.cpp` is as follows. Note that we can easily modify the types of `v` and `tmp` accordingly.
@@ -467,6 +516,7 @@ void swap_Rcpp(IntegerVector& v, int i, int j){
 
 ```{r}
 
+rm(list = ls())
 swap.eval <- function()
 {
   e <- quote({tmp <- v[i]; v[i] <- v[j]; v[j] <- tmp})
