@@ -287,9 +287,160 @@ We see that all four implimentations have the same likelihood curve and achieve 
 
 Similar to Part C and Part D, the different implimentations were run at different times with results saved similarly. However, for using the `MKL` libraries, this code was run on Virginia Tech's ARC machines.
 
+```{r}
+
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/remote_serial.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/remote_omp.RData")
+
+```
+
+The runtimes are as follows. Note during runtime that all 32 cores were used on the ARC machine.
+
+```{r}
+
+ll_1_time_mkl
+ll_2_time_mkl
+ll_c_serial_time_mkl
+ll_c_omp_time_mkl
+
+```
+
+We see vastly improved times in three of the four implimentations. Surprisingly, `loglik2` performs slower on ARC than running on local. Also of note is that the serial `loglik` performs faster than the `OpenMP` version. 
+
 # Problem 2
 
-Again, similar to #1, code was run locally and remotely with intermediate saving.
+Again, similar to #1, code was run locally and remotely with intermediate saving of objects.
+
+Our `R` and `C` versions are as follows, with a conditional function definition based on compile-time flags for `OpenMP`.
+
+```{r, eval = FALSE}
+
+bootols <- function(X, y, B=199, icept=TRUE, inv=FALSE)
+{
+	if(icept) X <- cbind(1, X)	
+	m <- ncol(X)
+	n <- nrow(X)
+	if(n != length(y)) stop("dimension mismatch")
+
+	ret <- .C("bootols_R",
+	  		  X = as.double(t(X)),
+	  		  y = as.double(y),
+	  		  n = as.integer(n),
+	  		  m = as.integer(m),
+	  		  B = as.integer(B),
+	  		  inv = as.integer(inv),
+	  		  beta.hat = double(m*B),
+	  		  DUP = FALSE)
+
+	## must be careful to return a transposed beta.hat matrix
+	return(matrix(ret$beta.hat, nrow=B, byrow=TRUE))
+}
+
+```
+
+```{r, eval=FALSE}
+
+#ifdef _OPENMP
+
+/*
+ * bootols:
+ *
+ * Bootstrap OLS subroutine, for B bootstrap samples of beta_hat
+ */
+
+void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_hat) 
+{
+  
+  #pragma omp parallel
+  {
+  
+    int me, nth;
+    me = omp_get_thread_num();
+    nth = omp_get_num_threads();
+
+    int b, i, j, bindex;
+    double **Xb, **XtX, **XtXi;
+    double *XtY, *Yb;
+  
+    /* temporary space for ols */
+    XtX = new_matrix(m, m); 
+    if(inv) {
+      XtY = (double*) malloc(sizeof(double) * m);
+      XtXi = new_matrix(m, m);
+    } else { XtY = NULL; XtXi = NULL; }
+    Xb = new_matrix(n, m);
+    Yb = (double*) malloc(sizeof(double) * n);	
+    
+    /* loop over bootstrap rounds */
+    for(b=me; b<B; b+=nth) {/* fill Xb and Yb */
+      for(i=0; i<n; i++) {
+        bindex = floor(n * unif_rand()); /* Rs RNG */
+        Yb[i] = Y[bindex];
+        for(j=0; j<m; j++) Xb[i][j] = X[bindex][j];
+      }
+    
+      /* call ols on Xb Yb */
+      ols(Xb, Yb, n, m, XtY, XtX, XtXi, beta_hat[b]);
+    }
+    
+    /* clean up */
+    delete_matrix(Xb);
+    free(Yb);
+    delete_matrix(XtX);
+    if(XtXi) delete_matrix(XtXi);
+    if(XtY) free(XtY);
+  
+  }
+	
+}
+
+#else
+
+/*
+ * bootols:
+ *
+ * Bootstrap OLS subroutine, for B bootstrap samples of beta_hat
+ */
+
+void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_hat) 
+{
+  int b, i, j, bindex;
+  double **Xb, **XtX, **XtXi;
+  double *XtY, *Yb;
+  
+  /* temporary space for ols */
+  XtX = new_matrix(m, m); 
+  if(inv) {
+    XtY = (double*) malloc(sizeof(double) * m);
+    XtXi = new_matrix(m, m);
+  } else { XtY = NULL; XtXi = NULL; }
+  Xb = new_matrix(n, m);
+  Yb = (double*) malloc(sizeof(double) * n);	
+  
+  /* loop over bootstrap rounds */
+  for(b=0; b<B; b++) {/* fill Xb and Yb */
+    for(i=0; i<n; i++) {
+      bindex = floor(n * unif_rand()); /* Rs RNG */
+      Yb[i] = Y[bindex];
+      for(j=0; j<m; j++) Xb[i][j] = X[bindex][j];
+    }
+  
+    /* call ols on Xb Yb */
+    ols(Xb, Yb, n, m, XtY, XtX, XtXi, beta_hat[b]);
+  }
+  
+  /* clean up */
+  delete_matrix(Xb);
+  free(Yb);
+  delete_matrix(XtX);
+  if(XtXi) delete_matrix(XtXi);
+  if(XtY) free(XtY);
+  
+}
+
+#endif
+
+```
 
 # Problem 3
 

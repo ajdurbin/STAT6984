@@ -16,7 +16,7 @@ ols.R <- function(X, y, icept=TRUE, method=c("lm", "inv", "solve", "cp"))
 }
 
 
-dyn.load("clect.so")
+dyn.load("../src/clect.so")
 
 ## ols:
 ##

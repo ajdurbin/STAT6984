@@ -164,6 +164,8 @@ void ols_R(double *X_in, double *Y_in, int *n_in, int *m_in,
 	if(XtY) free(XtY);
 }
 
+#ifdef _OPENMP
+
 /*
  * bootols:
  *
@@ -216,7 +218,50 @@ void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_
 	
 }
 
+#else
 
+/*
+ * bootols:
+ *
+ * Bootstrap OLS subroutine, for B bootstrap samples of beta_hat
+ */
+
+void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_hat) 
+{
+  int b, i, j, bindex;
+  double **Xb, **XtX, **XtXi;
+  double *XtY, *Yb;
+  
+  /* temporary space for ols */
+  XtX = new_matrix(m, m); 
+  if(inv) {
+    XtY = (double*) malloc(sizeof(double) * m);
+    XtXi = new_matrix(m, m);
+  } else { XtY = NULL; XtXi = NULL; }
+  Xb = new_matrix(n, m);
+  Yb = (double*) malloc(sizeof(double) * n);	
+  
+  /* loop over bootstrap rounds */
+  for(b=0; b<B; b++) {/* fill Xb and Yb */
+  for(i=0; i<n; i++) {
+    bindex = floor(n * unif_rand()); /* R's RNG */
+  Yb[i] = Y[bindex];
+  for(j=0; j<m; j++) Xb[i][j] = X[bindex][j];
+  }
+  
+  /* call ols on Xb Yb */
+  ols(Xb, Yb, n, m, XtY, XtX, XtXi, beta_hat[b]);
+  }
+  
+  /* clean up */
+  delete_matrix(Xb);
+  free(Yb);
+  delete_matrix(XtX);
+  if(XtXi) delete_matrix(XtXi);
+  if(XtY) free(XtY);
+}
+
+#endif
 
 /*
  * bootols_R:
