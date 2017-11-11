@@ -306,7 +306,7 @@ ll_c_omp_time_mkl
 
 ```
 
-We see vastly improved times in three of the four implimentations. Surprisingly, `loglik2` performs slower on ARC than running on local. Also of note is that the serial `loglik` performs faster than the `OpenMP` version. 
+We see vastly improved times in three of the four implimentations using the accelerated libraries. Surprisingly, `loglik2` performs slower on ARC than running on local. Also of note is that the serial `loglik` performs faster than the `OpenMP` version. 
 
 # Problem 2
 
@@ -485,11 +485,54 @@ void bootols(double **X, double *Y, int n, int m, int B, int inv, double **beta_
 rm(list = ls())
 load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/remote_serial.RData")
 load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/remote_omp.RData")
-ls()
-c(remote_cinv_time, remote_cinv_time_omp)
-c(remote_csolve_time, remote_csolve_time_omp)
+load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/local_omp.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/bootols/R/local_serial.RData")
 
 ```
+
+We next compare methods run locally and remotely using accelerated linear algebra libraries.
+
+```{r, include=FALSE}
+
+local_times <- data.frame(c(local_cinv_time[3], 
+                      local_cinv_time_omp[3],
+                      local_csolve_time[3],
+                      local_csolve_time_omp[3],
+                      local_rcp_time[3],
+                      local_rlm_time[3],
+                      local_rsolve_time[3],
+                      local_rinv_time[3]),
+                    row.names = c("C Inverse", "C Inverse Parallel", "C Solve", "C Solve Parallel", "R CP", "R LM", "R Solve", "R Inverse"))
+colnames(local_times) <- c("time")
+
+remote_times <- data.frame(c(remote_cinv_time[3], 
+                        remote_cinv_time_omp[3],
+                        remote_csolve_time[3],
+                        remote_csolve_time_omp[3],
+                        remote_rcp_time[3],
+                        remote_rlm_time[3],
+                        remote_rsolve_time[3],
+                        remote_rinv_time[3]),
+                      row.names = c("C Inverse", "C Inverse Parallel", "C Solve", "C Solve Parallel", "R CP", "R LM", "R Solve", "R Inverse"))
+colnames(remote_times) <- c("time")
+
+```
+
+```{r}
+
+knitr::kable(local_times, caption = "Local Runs Without MKL")
+
+```
+
+Similar to what we saw in class, the `R` versions are very slow depending on what solver you use. The parallelized `C` versions perform almost twice as fast as their serial counterparts. 
+
+```{r}
+
+knitr::kable(remote_times, caption = "Remote Runs With MKL")
+
+```
+
+Using the accelerated linear algebra libraries, we see massive performance gains in all methods besides the native `R` `lm()` implimentation. Both `OpenMP` parallelized `C` versions are the fastest implimentations again and have comparable times. They are closely followed by their non-parallel counterparts. The other `R` versions do experience massive performance gains as well. 
 
 # Problem 3
 
@@ -574,7 +617,7 @@ print(v[2])
 
 ```
 
-`swap_Rcpp` initially faster than `swap.eval`, but for the latter two runs, they are comparable. The first run of `swap.eval` is very slow before being instantaneous. We aren't sure what to attribute this result to.
+`swap_Rcpp` is initially faster than `swap.eval`, but for the latter two runs, they are comparable. The first run of `swap.eval` is very slow before being instantaneous. We aren't sure what to attribute this result to.
 
 # Problem 4
 
