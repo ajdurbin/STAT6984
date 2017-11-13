@@ -11,7 +11,7 @@ arma::vec logliks_Rcpp(arma::mat Y, arma::mat D, arma::vec thetas,
   int n = Y.n_rows;
   arma::vec likes(tlen);
   for(int i = 0; i < tlen; i++){
-    double theta = thetas.elem(i);
+    double theta = thetas(i);
     arma::mat Sigma = exp(-D/theta);
     arma::mat Schol = arma::chol(Sigma);
     double ldet = 2 * arma::accu(arma::log(Schol.diag()));
@@ -20,7 +20,7 @@ arma::vec logliks_Rcpp(arma::mat Y, arma::mat D, arma::vec thetas,
     for(int j = 0; j < n; j++){
         ll -= arma::as_scalar(0.5 * Y.row(i) * Si * arma::trans(Y.row(i)));
     }
-    likes.elem(i) = ll;;
+    likes(i) = ll;;
   }  
   return(likes);
 }
