@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-void swap_Rcpp(IntegerVector& v, int i, int j){
+void swap_Rcpp(IntegerVector v, int i, int j){
   
   int tmp;
   tmp = v[i];
