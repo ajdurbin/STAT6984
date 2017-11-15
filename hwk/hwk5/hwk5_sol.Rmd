@@ -261,24 +261,28 @@ ggplot() +
   xlab("Theta") +
   ylab("Likelihood") +
   ggtitle("loglik")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_1)])
 
 ggplot() + 
   geom_point(mapping = aes(x = thetas, y = ll_2)) +
   xlab("Theta") +
   ylab("Likelihood") +
   ggtitle("loglik2")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_2)])
 
 ggplot() + 
   geom_point(mapping = aes(x = thetas, y = ll_c_serial)) +
   xlab("Theta") +
   ylab("Likelihood") +
   ggtitle("logliks")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_c_serial)])
 
 ggplot() + 
   geom_point(mapping = aes(x = thetas, y = ll_c_omp)) +
   xlab("Theta") +
   ylab("Likelihood") +
   ggtitle("logliks with omp")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_c_omp)])
 
 ```
 
@@ -572,7 +576,7 @@ We compare the previous implimentations as follows. Recall that indicies start a
 
 ```{r}
 
-Rcpp::sourceCpp('rcpp/swap.cpp')
+Rcpp::sourceCpp("/home/alex/asc_durbin/hwk/hwk5/rcpp/swap/swap.cpp")
 
 v <- 1:1000000000
 
@@ -621,4 +625,132 @@ print(v[2])
 
 # Problem 4
 
-Again, we run code intermediately and across machines for good comparisons. The contents of `loglik.cpp` are as follows. 
+Again, we run code intermediately and across machines for good comparisons. The contents of `loglik.cpp` are as follows. We have both serial and parallel versions.
+
+```{r, eval=FALSE}
+
+#include <RcppArmadillo.h>
+using namespace Rcpp;
+
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::export]]
+arma::vec logliks_Rcpp(arma::mat Y, arma::mat D, arma::vec thetas,
+    double precision){
+    int tlen = thetas.n_elem;
+    int m = D.n_rows;
+    int n = Y.n_rows;
+    arma::vec likes(tlen);
+    for(int i = 0; i < tlen; i++){
+      double theta = thetas(i);
+      arma::mat Sigma = exp(-D/theta);
+      arma::mat Schol = arma::chol(Sigma);
+      double ldet = 2 * arma::accu(arma::log(Schol.diag()));
+      arma::mat Si = arma::inv_sympd(Sigma);
+      double ll = -0.5 * n * (m * log(2 * arma::datum::pi) + ldet); 
+      for(int j = 0; j < n; j++){
+          ll -= arma::as_scalar(0.5 * Y.row(j) * Si * arma::trans(Y.row(j)));
+      }
+      likes(i) = ll;
+    }  
+    return(likes);
+}
+
+
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::export]]
+arma::vec logliks_Rcpp_omp(arma::mat Y, arma::mat D, arma::vec thetas,
+    double precision, int cores){
+    int tlen = thetas.n_elem;
+    int m = D.n_rows;
+    int n = Y.n_rows;
+    arma::vec likes(tlen);
+    omp_set_num_threads(cores);
+    #pragma omp parallel for schedule(static)
+    for(int i = 0; i < tlen; i++){
+        double theta = thetas(i);
+        arma::mat Sigma = exp(-D/theta);
+        arma::mat Schol = arma::chol(Sigma);
+        double ldet = 2 * arma::accu(arma::log(Schol.diag()));
+        arma::mat Si = arma::inv_sympd(Sigma);
+        double ll = -0.5 * n * (m * log(2 * arma::datum::pi) + ldet); 
+        for(int j = 0; j < n; j++){
+            ll -= arma::as_scalar(0.5 * Y.row(j) * Si * arma::trans(Y.row(j)));
+        }
+        likes(i) = ll;
+    }     
+    return(likes);
+}
+
+```
+
+```{r}
+
+rm(list = ls())
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/data.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_serial.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/local_omp.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/remote_serial.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/mvnllik/R/remote_omp.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/rcpp/mvnllik/local_rcpp.RData")
+load("/home/alex/asc_durbin/hwk/hwk5/rcpp/mvnllik/remote_rcpp.RData")
+
+```
+
+```{r}
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_rcpp_serial)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("RCpp Serial")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_rcpp_serial)])
+
+ggplot() + 
+  geom_point(mapping = aes(x = thetas, y = ll_rcpp_omp)) +
+  xlab("Theta") +
+  ylab("Likelihood") +
+  ggtitle("RCpp OMP")
+paste0("Maximum Likelihood Estimate Of Theta: ", thetas[which.max(ll_rcpp_omp)])
+
+```
+
+Graphing our local machine serial and parallel `RCpp` implimentations, we see that they have the same likelihood curve as our previous `R` and `C` versions. 
+
+```{r, include=FALSE}
+
+local_times <- data.frame(c(ll_1_time[3], 
+                      ll_2_time[3],
+                      ll_c_omp_time[3],
+                      ll_c_serial_time[3],
+                      ll_rcpp_omp_time[3],
+                      ll_rcpp_serial_time[3]),
+                    row.names = c("loglik", "loglik2", "C OMP", "C Serial", "RCpp OMP", "RCpp Serial"))
+colnames(local_times) <- c("time")
+
+remote_times <- data.frame(c(ll_1_time_mkl[3], 
+                             ll_2_time_mkl[3],
+                             ll_c_omp_time_mkl[3],
+                             ll_c_serial_time_mkl[3],
+                             ll_rcpp_omp_time_mkl[3],
+                             ll_rcpp_serial_time_mkl[3]),
+                      row.names = c("loglik", "loglik2", "C OMP", "C Serial", "RCpp OMP", "RCpp Serial"))
+colnames(remote_times) <- c("time")
+
+```
+
+```{r}
+
+knitr::kable(local_times, caption = "Local Runs Without MKL")
+
+```
+
+We see that the `RCpp` versions are twice about twice as slow as the pure `C` versions. Additionally the serial `RCpp` is slower than `R`'s `loglik`, which is suprising. We think that the choice of inverse used in the `RCpp` version may have affect the timings. 
+
+```{r}
+
+knitr::kable(remote_times, caption = "Remote Runs With MKL")
+
+```
+
+Looking at the remote runs with accelerated linear algebra libraries, we see an improvement in all timings aside from `R`'s `lm()` that we noted above. We also see that the serial `C` version is slightly faster than the parallel version. Furthermore, we see that the parallel `C` and `RCpp` versions are comparable, unlike our local machine runs. Also, the serial `RCpp` version is again beaten by `R`'s `loglik`. We think that for writing pure `C` code and running on a machine with accelerated linear algebra libraries do not benefit greatly from being written for parallel execution.
