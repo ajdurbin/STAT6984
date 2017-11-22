@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Sample submission script for snow Pi Monte Carlo
+# Make sure to change the -A line to your allocation
+
+#PBS -l walltime=00:10:00
+#PBS -l nodes=2:ppn=16
+#PBS -W group_list=blueridge
+#PBS -q normal_q
+#PBS -A ascclass 
+
+# Add modules
+module purge
+module load gcc openblas R/3.2.0
+module load openmpi hdf5 netcdf R-parallel/3.2.0
+
+# Change to the directory from which the job was submitted
+cd $PBS_O_WORKDIR
+
+# Run R
+Rscript mcpi_snow.r
+
+exit;

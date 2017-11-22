@@ -1,0 +1,50 @@
+Loading required package: Rmpi
+[br235:51639] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+--------------------------------------------------------------------------
+Error obtaining unique transport key from ORTE (orte_precondition_transports not present in
+the environment).
+
+  Local host: br235
+
+--------------------------------------------------------------------------
+
+Attaching package: 'Rmpi'
+
+The following object is masked from 'package:rlecuyer':
+
+    .onUnload
+
+[br235:51653] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51654] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51657] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51662] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51658] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51660] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51664] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51663] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10855] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51661] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10856] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10854] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51655] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10857] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51667] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10859] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51666] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51665] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10862] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10858] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10863] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51659] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10865] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10868] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10866] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10860] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10867] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10869] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51668] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10861] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br274:10864] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51656] Error: mtl_mxm.c:342 - ompi_mtl_mxm_module_init() Failed to generate jobid
+[br235:51645] 32 more processes have sent help message help-mtl-mxm.txt / no uuid present
+[br235:51645] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
