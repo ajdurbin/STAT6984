@@ -4,15 +4,16 @@
 # Make sure to change the -A line to your allocation
 
 #PBS -l walltime=00:10:00
-#PBS -l nodes=2:ppn=16
-#PBS -W group_list=blueridge
+#PBS -l nodes=2:ppn=24
+#PBS -W group_list=dragonstooth
 #PBS -q normal_q
 #PBS -A ascclass 
 
 # Add modules
 module purge
-module load gcc openblas R/3.2.0
-module load openmpi hdf5 netcdf R-parallel/3.2.0
+module load intel mkl R/3.4.1 openmpi hdf5/1.8.16 netcdf-c/4.4.0
+module load R-parallel/3.4.1
+
 
 # Change to the directory from which the job was submitted
 cd $PBS_O_WORKDIR
