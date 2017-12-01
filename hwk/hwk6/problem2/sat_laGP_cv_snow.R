@@ -1,4 +1,4 @@
-library(laGP, lib.loc = lib.Paths())
+library(laGP, lib.loc = "~/R/lib")
  
 ## data file for GRACE satellite
 graceHe <- read.table("graceHe.dat", header=TRUE)
