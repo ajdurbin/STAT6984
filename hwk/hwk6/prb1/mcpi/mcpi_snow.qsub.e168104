@@ -1,7 +1,0 @@
-
-Attaching package: 'rlecuyer'
-
-The following object is masked from 'package:Rmpi':
-
-    .onUnload
-
