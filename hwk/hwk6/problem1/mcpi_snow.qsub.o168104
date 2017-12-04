@@ -1,0 +1,8 @@
+running parallel version with n.pts =  1e+06  and ncores =  48  ( 20834  pts per core) 
+	48 slaves are spawned successfully. 0 failed.
+[1] "RNGstream"
+[1] 1
+     pi estimate =  3.141928 
+  relative error =  0.0001067441 
+  computational time =  0.936867 
+          total time =  4.222405 
