@@ -1,0 +1,19 @@
+Saved current collection of modules to: default
+parallel: SIGTERM received. No new jobs will be started.
+parallel: Waiting for these 5 jobs to finish. Send SIGTERM again to stop now.
+parallel: R CMD BATCH "--args seed=2 reps=6" spam_mc.R spam_mc_2.Rout
+parallel: R CMD BATCH "--args seed=1 reps=6" spam_mc.R spam_mc_1.Rout
+parallel: R CMD BATCH "--args seed=4 reps=6" spam_mc.R spam_mc_4.Rout
+parallel: R CMD BATCH "--args seed=5 reps=6" spam_mc.R spam_mc_5.Rout
+parallel: R CMD BATCH "--args seed=3 reps=6" spam_mc.R spam_mc_3.Rout
+=>> PBS: job killed: walltime 36015 exceeded limit 36000
+Warning: Permanently added 'ca024,10.81.10.24' (ECDSA) to the list of known hosts.
+Killed by signal 15.
+Warning: Permanently added 'ca012,10.81.10.12' (ECDSA) to the list of known hosts.
+Killed by signal 15.
+Warning: Permanently added 'ca137,10.81.10.137' (ECDSA) to the list of known hosts.
+Killed by signal 15.
+Warning: Permanently added 'ca167,10.81.10.167' (ECDSA) to the list of known hosts.
+Killed by signal 15.
+Warning: Permanently added 'ca025,10.81.10.25' (ECDSA) to the list of known hosts.
+Killed by signal 15.

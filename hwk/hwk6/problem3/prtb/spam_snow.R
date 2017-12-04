@@ -150,7 +150,7 @@ library(parallel, lib.loc = "~/R/lib")
 np <- as.numeric(Sys.getenv("PBS_NUM_NODES"))
 cl <- makeCluster(np, type = "MPI")
 nth <- as.numeric(Sys.getenv("PBS_NUM_PPN")
-hitrate <- spamcv.snow(cl, spam, np, nth)
+hitrate <- spamcv.snow(cl, spam)
 stopCluster(cl)
 mpi.exit()
 

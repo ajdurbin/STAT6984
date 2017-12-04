@@ -9,7 +9,9 @@
 ## interact -lnodes=5:ppn=24 -lwalltime=1:00:00 -A ascclass -qnormal_q
 
 ## Add modules
+module purge
 module load intel mkl R/3.4.1 openmpi hdf5/1.8.16 netcdf-c/4.4.0 R-parallel/3.4.1
+module save
 
 ## Change to the directory from which the job was submitted
 cd $PBS_O_WORKDIR

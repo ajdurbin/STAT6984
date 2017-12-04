@@ -18,9 +18,9 @@ module save
 
 cat $PBS_NODEFILE | uniq >> nodes
 
-nth=100     #Number of total processes to run
+nth=5     #Number of total processes to run
 nj=$PBS_NP  #Number of proccesses to run at a time
-reps=30
+reps=6
 
 export MKL_NUM_THREADS=32
 
