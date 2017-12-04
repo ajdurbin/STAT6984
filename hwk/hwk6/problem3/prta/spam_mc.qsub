@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#PBS -l nodes=5:ppn=32
+#PBS -l walltime=10:00:00       
+#PBS -q normal_q              
+#PBS -W group_list=cascades   
+#PBS -A ascclass
+
+cd $PBS_O_WORKDIR
+
+module purge
+module load intel mkl R/3.4.1
+
+export R_LIBS="$HOME/R/lib:$R_LIBS"
+
+module load parallel
+module save
+
+cat $PBS_NODEFILE | uniq >> nodes
+
+nth=100     #Number of total processes to run
+nj=$PBS_NP  #Number of proccesses to run at a time
+reps=30
+
+export MKL_NUM_THREADS=32
+
+echo "$( date ): Starting spam_mc"
+seq 1 $nth | parallel --workdir . --sshloginfile nodes -j $nj \
+"R CMD BATCH \"--args seed={} reps=$reps\" spam_mc.R spam_mc_{}.Rout"
+echo "$( date ): Finished spam_mc"
+
+echo "$( date ): Starting spam_mc_collect"
+R CMD BATCH spam_mc_collect.R
+echo "$( date ): Finished spam_mc_collect"

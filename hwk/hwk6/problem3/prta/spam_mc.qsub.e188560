@@ -1,0 +1,219 @@
+Saved current collection of modules to: default
+parallel: Warning: ssh to ca068 only allows for 33 simultaneous logins.
+parallel: Warning: You may raise this by changing /etc/ssh/sshd_config:MaxStartups and MaxSessions on ca068.
+parallel: Warning: Using only 32 connections to avoid race conditions.
+parallel: Warning: ssh to ca073 only allows for 33 simultaneous logins.
+parallel: Warning: You may raise this by changing /etc/ssh/sshd_config:MaxStartups and MaxSessions on ca073.
+parallel: Warning: Using only 32 connections to avoid race conditions.
+parallel: Warning: ssh to ca069 only allows for 33 simultaneous logins.
+parallel: Warning: You may raise this by changing /etc/ssh/sshd_config:MaxStartups and MaxSessions on ca069.
+parallel: Warning: Using only 32 connections to avoid race conditions.
+parallel: Warning: ssh to ca052 only allows for 33 simultaneous logins.
+parallel: Warning: You may raise this by changing /etc/ssh/sshd_config:MaxStartups and MaxSessions on ca052.
+parallel: Warning: Using only 32 connections to avoid race conditions.
+parallel: Warning: ssh to ca074 only allows for 32 simultaneous logins.
+parallel: Warning: You may raise this by changing /etc/ssh/sshd_config:MaxStartups and MaxSessions on ca074.
+parallel: Warning: Using only 31 connections to avoid race conditions.
+parallel: SIGTERM received. No new jobs will be started.
+parallel: Waiting for these 100 jobs to finish. Send SIGTERM again to stop now.
+parallel: R CMD BATCH "--args seed=53 reps=30" spam_mc.R spam_mc_53.Rout
+parallel: R CMD BATCH "--args seed=83 reps=30" spam_mc.R spam_mc_83.Rout
+parallel: R CMD BATCH "--args seed=46 reps=30" spam_mc.R spam_mc_46.Rout
+parallel: R CMD BATCH "--args seed=26 reps=30" spam_mc.R spam_mc_26.Rout
+parallel: R CMD BATCH "--args seed=25 reps=30" spam_mc.R spam_mc_25.Rout
+parallel: R CMD BATCH "--args seed=20 reps=30" spam_mc.R spam_mc_20.Rout
+parallel: R CMD BATCH "--args seed=93 reps=30" spam_mc.R spam_mc_93.Rout
+parallel: R CMD BATCH "--args seed=81 reps=30" spam_mc.R spam_mc_81.Rout
+parallel: R CMD BATCH "--args seed=88 reps=30" spam_mc.R spam_mc_88.Rout
+parallel: R CMD BATCH "--args seed=8 reps=30" spam_mc.R spam_mc_8.Rout
+parallel: R CMD BATCH "--args seed=76 reps=30" spam_mc.R spam_mc_76.Rout
+parallel: R CMD BATCH "--args seed=61 reps=30" spam_mc.R spam_mc_61.Rout
+parallel: R CMD BATCH "--args seed=57 reps=30" spam_mc.R spam_mc_57.Rout
+parallel: R CMD BATCH "--args seed=1 reps=30" spam_mc.R spam_mc_1.Rout
+parallel: R CMD BATCH "--args seed=34 reps=30" spam_mc.R spam_mc_34.Rout
+parallel: R CMD BATCH "--args seed=52 reps=30" spam_mc.R spam_mc_52.Rout
+parallel: R CMD BATCH "--args seed=74 reps=30" spam_mc.R spam_mc_74.Rout
+parallel: R CMD BATCH "--args seed=48 reps=30" spam_mc.R spam_mc_48.Rout
+parallel: R CMD BATCH "--args seed=40 reps=30" spam_mc.R spam_mc_40.Rout
+parallel: R CMD BATCH "--args seed=6 reps=30" spam_mc.R spam_mc_6.Rout
+parallel: R CMD BATCH "--args seed=86 reps=30" spam_mc.R spam_mc_86.Rout
+parallel: R CMD BATCH "--args seed=50 reps=30" spam_mc.R spam_mc_50.Rout
+parallel: R CMD BATCH "--args seed=7 reps=30" spam_mc.R spam_mc_7.Rout
+parallel: R CMD BATCH "--args seed=19 reps=30" spam_mc.R spam_mc_19.Rout
+parallel: R CMD BATCH "--args seed=97 reps=30" spam_mc.R spam_mc_97.Rout
+parallel: R CMD BATCH "--args seed=12 reps=30" spam_mc.R spam_mc_12.Rout
+parallel: R CMD BATCH "--args seed=64 reps=30" spam_mc.R spam_mc_64.Rout
+parallel: R CMD BATCH "--args seed=60 reps=30" spam_mc.R spam_mc_60.Rout
+parallel: R CMD BATCH "--args seed=16 reps=30" spam_mc.R spam_mc_16.Rout
+parallel: R CMD BATCH "--args seed=54 reps=30" spam_mc.R spam_mc_54.Rout
+parallel: R CMD BATCH "--args seed=47 reps=30" spam_mc.R spam_mc_47.Rout
+parallel: R CMD BATCH "--args seed=58 reps=30" spam_mc.R spam_mc_58.Rout
+parallel: R CMD BATCH "--args seed=56 reps=30" spam_mc.R spam_mc_56.Rout
+parallel: R CMD BATCH "--args seed=69 reps=30" spam_mc.R spam_mc_69.Rout
+parallel: R CMD BATCH "--args seed=59 reps=30" spam_mc.R spam_mc_59.Rout
+parallel: R CMD BATCH "--args seed=32 reps=30" spam_mc.R spam_mc_32.Rout
+parallel: R CMD BATCH "--args seed=98 reps=30" spam_mc.R spam_mc_98.Rout
+parallel: R CMD BATCH "--args seed=9 reps=30" spam_mc.R spam_mc_9.Rout
+parallel: R CMD BATCH "--args seed=5 reps=30" spam_mc.R spam_mc_5.Rout
+parallel: R CMD BATCH "--args seed=100 reps=30" spam_mc.R spam_mc_100.Rout
+parallel: R CMD BATCH "--args seed=42 reps=30" spam_mc.R spam_mc_42.Rout
+parallel: R CMD BATCH "--args seed=41 reps=30" spam_mc.R spam_mc_41.Rout
+parallel: R CMD BATCH "--args seed=71 reps=30" spam_mc.R spam_mc_71.Rout
+parallel: R CMD BATCH "--args seed=51 reps=30" spam_mc.R spam_mc_51.Rout
+parallel: R CMD BATCH "--args seed=77 reps=30" spam_mc.R spam_mc_77.Rout
+parallel: R CMD BATCH "--args seed=84 reps=30" spam_mc.R spam_mc_84.Rout
+parallel: R CMD BATCH "--args seed=75 reps=30" spam_mc.R spam_mc_75.Rout
+parallel: R CMD BATCH "--args seed=82 reps=30" spam_mc.R spam_mc_82.Rout
+parallel: R CMD BATCH "--args seed=62 reps=30" spam_mc.R spam_mc_62.Rout
+parallel: R CMD BATCH "--args seed=91 reps=30" spam_mc.R spam_mc_91.Rout
+parallel: R CMD BATCH "--args seed=18 reps=30" spam_mc.R spam_mc_18.Rout
+parallel: R CMD BATCH "--args seed=72 reps=30" spam_mc.R spam_mc_72.Rout
+parallel: R CMD BATCH "--args seed=29 reps=30" spam_mc.R spam_mc_29.Rout
+parallel: R CMD BATCH "--args seed=37 reps=30" spam_mc.R spam_mc_37.Rout
+parallel: R CMD BATCH "--args seed=96 reps=30" spam_mc.R spam_mc_96.Rout
+parallel: R CMD BATCH "--args seed=45 reps=30" spam_mc.R spam_mc_45.Rout
+parallel: R CMD BATCH "--args seed=65 reps=30" spam_mc.R spam_mc_65.Rout
+parallel: R CMD BATCH "--args seed=95 reps=30" spam_mc.R spam_mc_95.Rout
+parallel: R CMD BATCH "--args seed=70 reps=30" spam_mc.R spam_mc_70.Rout
+parallel: R CMD BATCH "--args seed=49 reps=30" spam_mc.R spam_mc_49.Rout
+parallel: R CMD BATCH "--args seed=13 reps=30" spam_mc.R spam_mc_13.Rout
+parallel: R CMD BATCH "--args seed=78 reps=30" spam_mc.R spam_mc_78.Rout
+parallel: R CMD BATCH "--args seed=15 reps=30" spam_mc.R spam_mc_15.Rout
+parallel: R CMD BATCH "--args seed=90 reps=30" spam_mc.R spam_mc_90.Rout
+parallel: R CMD BATCH "--args seed=33 reps=30" spam_mc.R spam_mc_33.Rout
+parallel: R CMD BATCH "--args seed=85 reps=30" spam_mc.R spam_mc_85.Rout
+parallel: R CMD BATCH "--args seed=73 reps=30" spam_mc.R spam_mc_73.Rout
+parallel: R CMD BATCH "--args seed=99 reps=30" spam_mc.R spam_mc_99.Rout
+parallel: R CMD BATCH "--args seed=68 reps=30" spam_mc.R spam_mc_68.Rout
+parallel: R CMD BATCH "--args seed=44 reps=30" spam_mc.R spam_mc_44.Rout
+parallel: R CMD BATCH "--args seed=63 reps=30" spam_mc.R spam_mc_63.Rout
+parallel: R CMD BATCH "--args seed=79 reps=30" spam_mc.R spam_mc_79.Rout
+parallel: R CMD BATCH "--args seed=4 reps=30" spam_mc.R spam_mc_4.Rout
+parallel: R CMD BATCH "--args seed=23 reps=30" spam_mc.R spam_mc_23.Rout
+parallel: R CMD BATCH "--args seed=39 reps=30" spam_mc.R spam_mc_39.Rout
+parallel: R CMD BATCH "--args seed=3 reps=30" spam_mc.R spam_mc_3.Rout
+parallel: R CMD BATCH "--args seed=30 reps=30" spam_mc.R spam_mc_30.Rout
+parallel: R CMD BATCH "--args seed=17 reps=30" spam_mc.R spam_mc_17.Rout
+parallel: R CMD BATCH "--args seed=38 reps=30" spam_mc.R spam_mc_38.Rout
+parallel: R CMD BATCH "--args seed=24 reps=30" spam_mc.R spam_mc_24.Rout
+parallel: R CMD BATCH "--args seed=67 reps=30" spam_mc.R spam_mc_67.Rout
+parallel: R CMD BATCH "--args seed=10 reps=30" spam_mc.R spam_mc_10.Rout
+parallel: R CMD BATCH "--args seed=89 reps=30" spam_mc.R spam_mc_89.Rout
+parallel: R CMD BATCH "--args seed=80 reps=30" spam_mc.R spam_mc_80.Rout
+parallel: R CMD BATCH "--args seed=11 reps=30" spam_mc.R spam_mc_11.Rout
+parallel: R CMD BATCH "--args seed=87 reps=30" spam_mc.R spam_mc_87.Rout
+parallel: R CMD BATCH "--args seed=36 reps=30" spam_mc.R spam_mc_36.Rout
+parallel: R CMD BATCH "--args seed=27 reps=30" spam_mc.R spam_mc_27.Rout
+parallel: R CMD BATCH "--args seed=94 reps=30" spam_mc.R spam_mc_94.Rout
+parallel: R CMD BATCH "--args seed=66 reps=30" spam_mc.R spam_mc_66.Rout
+parallel: R CMD BATCH "--args seed=22 reps=30" spam_mc.R spam_mc_22.Rout
+parallel: R CMD BATCH "--args seed=21 reps=30" spam_mc.R spam_mc_21.Rout
+parallel: R CMD BATCH "--args seed=43 reps=30" spam_mc.R spam_mc_43.Rout
+parallel: R CMD BATCH "--args seed=28 reps=30" spam_mc.R spam_mc_28.Rout
+parallel: R CMD BATCH "--args seed=2 reps=30" spam_mc.R spam_mc_2.Rout
+parallel: R CMD BATCH "--args seed=14 reps=30" spam_mc.R spam_mc_14.Rout
+parallel: R CMD BATCH "--args seed=31 reps=30" spam_mc.R spam_mc_31.Rout
+parallel: R CMD BATCH "--args seed=55 reps=30" spam_mc.R spam_mc_55.Rout
+parallel: R CMD BATCH "--args seed=92 reps=30" spam_mc.R spam_mc_92.Rout
+parallel: R CMD BATCH "--args seed=35 reps=30" spam_mc.R spam_mc_35.Rout
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+=>> PBS: job killed: walltime 36029 exceeded limit 36000
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
+Killed by signal 15.
