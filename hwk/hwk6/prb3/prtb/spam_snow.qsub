@@ -16,12 +16,8 @@ module save
 ## Change to the directory from which the job was submitted
 cd $PBS_O_WORKDIR
 
-## set num threads; not sure if this is needed
-export OMP_NUM_THREADS=$PBS_NUM_PPN
-
 ## Run R
-SCRIPT=spam_snow.R  
-mpirun -np 1 --map-by ppr:1:node --bind-to none Rscript $SCRIPT &
+Rscript spam_snow.R
 
 ## Solution to the MPI busy-wait problem
 while [ 1 ]; do

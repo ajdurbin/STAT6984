@@ -181,3 +181,60 @@ setwd("../../")
 ```
 
 ## `MPI`
+
+Our job submission was too far behind the queue and was blocked, so we have no boxplots to display. Our `qsub` script is as follows.
+
+```{r eval=FALSE}
+
+#!/bin/bash
+#PBS -l walltime=12:00:00
+#PBS -q normal_q
+#PBS -A ascclass
+#PBS -W group_list=dragonstooth
+#PBS -l nodes=5:ppn=24
+
+## interactive version for testing
+## interact -lnodes=5:ppn=24 -lwalltime=1:00:00 -A ascclass -qnormal_q
+
+## Add modules
+module purge
+module load intel mkl R/3.4.1 openmpi hdf5/1.8.16 netcdf-c/4.4.0 R-parallel/3.4.1
+module save
+
+## Change to the directory from which the job was submitted
+cd $PBS_O_WORKDIR
+
+## Run R
+Rscript spam_snow.R
+
+## Solution to the MPI busy-wait problem
+while [ 1 ]; do
+    sleep 1
+    PID=$(pgrep -f "R --slave --no-restore --file=$SCRIPT")
+    [ -z "$PID" ] || break
+done
+
+renice 19 $PID
+
+wait
+
+exit;
+
+```
+
+We modified the relevant parts of `spam_snow.R` as follows.
+
+```{r eval=FALSE}
+
+library(Rmpi, lib.loc = "~/R/lib")
+library(parallel, lib.loc = "~/R/lib")
+np <- as.numeric(Sys.getenv("PBS_NUM_NODES"))
+cl <- makeCluster(np, type = "MPI")
+nth <- as.numeric(Sys.getenv("PBS_NUM_PPN")
+hitrate <- spamcv.snow(cl, spam)
+stopCluster(cl)
+mpi.exit()
+
+save.image("spam_snow.RData")
+
+```
