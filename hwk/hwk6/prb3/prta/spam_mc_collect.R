@@ -1,8 +1,8 @@
 ## in case its not already loaded
-spam <- read.csv("../data/spam.csv")
+spam <- read.csv("spam.csv")
 
 ## find the spam saved outputs in the CWD
-files <- list.files("./", pattern="spam_[0-9]*.RData")
+files <- list.files(pattern="spam_[0-9]*.RData")
 
 ## empty initialization
 pfulls <- pfwds <- pfwdis <- pldas <- pqdas <- NULL
