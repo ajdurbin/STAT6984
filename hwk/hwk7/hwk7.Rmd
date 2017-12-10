@@ -168,3 +168,31 @@ subplot(p,
            showlegend = FALSE)
 
 ```
+
+# GPU Problem 1
+
+We get the following plots for the different runs using `MetroH_PT.R`.
+
+```{r, echo=FALSE}
+
+knitr::include_graphics("gpu/CPU.png")
+knitr::include_graphics("gpu/CPU-parallel.png")
+knitr::include_graphics("gpu/GPU.png")
+
+```
+
+We see that we get near identical resuls for all three computation methods.
+
+```{r, echo=FALSE}
+
+cpu <- c(12.010, 193.7, 0, 17, 0)
+cpu_parallel <- c(0.767, 0, 0, 17, 0)
+gpu <- c(1.048, 155.1, 0, 308, 98) 
+results = data.frame(cpu = cpu, cpu_parallel = cpu_parallel, gpu = gpu,
+                     row.names = c("Elapsed Time", "Peak CPU %", "Peak CPU Memory %",
+                                   "Peak GPU Memory MB", "Peak GPU Utilization %"))
+knitr::kable(results)
+
+```
+
+We see that the parallel CPU runs are slightly faster than the GPU runs. We can attribute this to memory allocation and copying to and from the CPU cache to the GPU cache. We also note that for both CPU runs that the GPU uses 17 MB of memory on idle. The GPU runs only used a single GPU also. The parallel CPU version was so fast that `top` could not pick up any measurement on utilization or memory usage, so we do not have any useful metrics to report other than the runtime. 
