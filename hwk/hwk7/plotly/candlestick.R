@@ -150,16 +150,164 @@ l <- list(type = line,
 p <- plot_ly(df, x = ~Date, type="candlestick", open = ~AAPL.Open, 
         close = ~AAPL.Close, high = ~AAPL.High, low = ~AAPL.Low,
         color = ~AAPL.Close > AAPL.Open,
-        colors = c("red", "forestgreen")) %>%
+        colors = c("forestgreen", "red")) %>%
     layout(showlegend = FALSE, annotations = a, shapes = l, 
            yaxis = list(title = "Price"),
            axis = list(rangeslider = list(visible = FALSE)))
 pp <- df %>%
     plot_ly(x=~Date, y=~AAPL.Volume, type='bar', name = "AAPL Volume",
-            color = ~AAPL.Close > AAPL.Open, colors = c('red','forestgreen')) %>%
+            color = ~AAPL.Close > AAPL.Open, colors = c('forestgreen','red')) %>%
     layout(yaxis = list(title = "Volume"))
 all <- subplot(p, pp, heights = c(0.7,0.2), nrows=2,
              shareX = TRUE, titleY = TRUE) %>% 
     layout(title = paste("Apple: 2017-01-01 -",Sys.Date()),
            showlegend = FALSE, xaxis = list(rangeslider = list(visible = F)))
 all
+
+# latest solution using plotly candlestick guide
+rm(list = ls())
+library(quantmod)
+library(plotly)
+
+stock <- getSymbols("AAPL", auto.assign = F)
+dts <- index(stock)
+df <- data.frame(stock, row.names = NULL)
+df$dates <- dts
+names(df) <- c("Open", "High", "Low", "Close", "Volume", "Adjusted", "dates")
+
+# Subset to after Jan 2017
+df <- subset(df, dates > "2017-01-01")
+
+# colors column for increasing and decreasing
+for (i in 1:nrow(df)) {
+    if (df$Close[i] >= df$Open[i]) {
+        df$direction[i] = 'Increasing'
+    } else {
+        df$direction[i] = 'Decreasing'
+    }
+}
+
+# Add annotation
+a <- list(text = ~paste("Oct. 27", "<br>iPhone X", "<br>available"),
+          x = '2017-10-27',
+          y = df[which(df$dates == '2017-10-27'), 2],
+          xref = 'x',
+          yref = 'y',
+          xanchor = 'center',
+          yanchor = 'bottom',
+          showarrow = F)
+
+# # Range selector
+# rangeselectorlist = list(
+#     x = 0, y = 0.9,
+#     bgcolor = "#0099cc",
+#     font = list(color = "white"),
+#     
+#     buttons = list(
+#         list(count = 1, label = "reset", step = "all"),
+#         list(count = 6, label = "6 mo", step = "month", stepmode = "backward"),
+#         list(count = 3, label = "3 mo", step = "month", stepmode = "backward"),
+#         list(count = 1, label = "1 mo", step = "month", stepmode = "backward")
+#     )
+# )
+
+p <- df %>% 
+    plot_ly(type = "candlestick",
+            x = ~dates,
+            open = ~Open,
+            high = ~High,
+            low = ~Low,
+            increasing = list(line = list(color = "#FF0000")),
+            decreasing = list(line = list(color = "#008000")),
+            close = ~Close # , text = ~paste(dates, "Open: ", Open, '<br>Close:', Close, '<br>High:', High, '<br>Low:', Low, , '<br>Volume:', Volumn)
+    ) %>%
+    layout(yaxis = list(title = "Price"))
+
+pp <- df %>%
+    plot_ly(x = ~dates, y = ~Volume, type = 'bar', name = "Volume",
+            color = ~direction, colors = c('#008000', '#FF0000')) %>%
+    layout(yaxis = list(title = "Volume"))
+
+subplot(p, pp, heights = c(0.7, 0.2), nrows = 2, shareX = T, titleY = T) %>%
+    layout(title = "2017 Apple Stock Price",
+           xaxis = list(title = "", domain = c(0, 0.95),
+                        rangeslider = list(visible = F)),
+           showlegend = F,
+           annotations = a
+    )
+
+# latest ----
+rm(list = ls())
+library(quantmod)
+library(plotly)
+
+df <- getSymbols(Symbols = "AAPL", src = "yahoo")
+df <- data.frame(Date = index(AAPL), coredata(AAPL))
+df <- subset(df, Date >= "2017-01-01")
+names(df) <- sub("^AAPL\\.", "", names(df))
+
+# labels for increasing/decreasing
+for (i in 1:nrow(df)) {
+    if (df$Close[i] >= df$Open[i]) {
+        df$direction[i] = "Increasing"
+    } else {
+        df$direction[i] = "Decreasing"
+    }
+}
+
+# mark iphone x release date
+a <- list(text = "Oct. 27\niPhone X\nReleased",
+          x = '2017-10-27',
+          y = 1.05,
+          xref = "x",
+          yref = "paper",
+          xanchor = "left",
+          showarrow = FALSE)
+
+# use shapes to create a line
+l <- list(type = line,
+          x0 = "2017-10-27",
+          x1 = "2017-10-27",
+          y0 = 0.5,
+          y1 = 1,
+          xref = "x",
+          yref = "paper",
+          line = list(color = "black", width = 0.5))
+
+# top plot
+p <- plot_ly(df,
+             type = "candlestick",
+             x = ~Date,
+             open = ~Open,
+             close = ~Close,
+             high = ~High,
+             low = ~Low,
+             increasing = list(line = list(color = "red")),
+             decreasing = list(line = list(color = "forestgreen"))) %>% 
+    layout(showlegend = FALSE,
+           annotations = a,
+           shapes = l,
+           axis = list(rangeslider = list(visible = FALSE)),
+           yaxis = list(title = "Price"))
+
+# bottom plot
+pp <- plot_ly(df,
+              x = ~Date,
+              y = ~Volume,
+              type = "bar",
+              name = "Volume",
+              color = ~direction,
+              colors = c("forestgreen", "red")) %>% 
+    layout(yaxis = list(title = "Volume"))
+
+# combine into subplot
+subplot(p,
+        pp,
+        heights = c(0.7, 0.2),
+        nrows = 2,
+        shareX = TRUE,
+        titleY = TRUE) %>% 
+    layout(title = paste0("Apple: 2017-01-01 - ", Sys.Date()),
+           showlegend = FALSE,
+           xaxis = list(rangeslider = list(visible = FALSE)),
+           showlegend = FALSE)
