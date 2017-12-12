@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(quantmod)
 library(plotly)
 library(ggplot2)
+library(gapminder)
 options("getSymbols.warning4.0"=FALSE)
 options("getSymbols.yahoo.warning"=FALSE)
 
@@ -168,6 +169,36 @@ subplot(p,
            showlegend = FALSE)
 
 ```
+
+# `ggplot2/plotly` Problem 3
+
+The following code makes a three dimensional graphic of life expectancy, population, and Gross Domestic Product over time.
+
+```{r}
+
+rm(list = ls())
+
+plot_ly(gapminder, 
+        x = ~gdpPercap, 
+        y = ~lifeExp, 
+        z = ~pop,
+        size = ~pop, 
+        color = ~continent, 
+        colors = c("green", "purple", "blue", "orange", "red", "yellow"),
+        frame = ~year, 
+        text = ~paste("Country:", country, 
+                      "<br>Pop.:", pop,
+                      "<br>Life Exp.:", lifeExp,
+                      "<br>GDP:", gdpPercap)) %>% 
+  add_markers(marker = list(symbol = "circle", sizemode = "diameter")) %>% 
+  layout(title = "Population Versus Life Expectancy Versus GDP Over Time",
+         scene = list(xaxis = list(title = "GDP"),
+                      yaxis = list(title = "Life Expectancy"),
+                      zaxis = list(title = "Population")))
+
+```
+
+Running the graphic, we see that as life expectancy slightly increases as the population does for most non-African countries. Also, the United States, India, and China populations grow the fastest, though the the Gross Domestic Products for China and India do not grow as fast as the United States'. We also see that as life expectancy increases so does the Gross Domestic Product for most America, European, and Asian countries exponentially. Africa has the lowest life expectancy, gross domestic product, and population.
 
 # GPU Problem 1
 
