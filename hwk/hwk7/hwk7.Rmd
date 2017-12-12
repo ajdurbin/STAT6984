@@ -13,6 +13,7 @@ library(quantmod)
 library(plotly)
 library(ggplot2)
 library(gapminder)
+library(stringr)
 options("getSymbols.warning4.0"=FALSE)
 options("getSymbols.yahoo.warning"=FALSE)
 
@@ -227,3 +228,143 @@ knitr::kable(results)
 ```
 
 We see that the parallel CPU runs are slightly faster than the GPU runs. We can attribute this to memory allocation and copying to and from the CPU cache to the GPU cache. We also note that for both CPU runs that the GPU uses 17 MB of memory on idle. The GPU runs only used a single GPU also. The parallel CPU version was so fast that `top` could not pick up any measurement on utilization or memory usage, so we do not have any useful metrics to report other than the runtime. 
+
+# `regex` Problem 1
+
+We can summarize our files by extension with the following function that only needs the root directory to search.
+
+```{r}
+
+process_file_types <- function(root = "/Users/alexanderdurbin/Google Drive/vt/STAT-git/asc_durbin/") {
+  
+  # all files
+  my_files <- list.files(path = root, recursive = TRUE, full.names = TRUE)
+  # get everything after last / now
+  my_files <- str_extract(string = my_files, pattern = "[^/]*$")
+  # make lower case
+  my_files <- str_to_lower(string = my_files)
+  # get extensions
+  extensions <- str_extract(string = my_files, pattern = "[^.]*$")
+  extensions <- unique(extensions)
+  
+  # print by types
+  cat("extension | filename")
+  for (i in 1:length(extensions)) {
+    
+    # grab extension
+    ext <- extensions[i]
+    # grab for those files ending in .ext
+    my_pattern <-  paste0("\\b", ext, "\\b$")
+    good_files <- str_detect(string = my_files, pattern = my_pattern)
+    good_files <- my_files[good_files]
+    # remove the extensions
+    my_pattern <- paste0("\\.", ext, "$")
+    good_files <- str_replace(string = good_files, pattern = my_pattern,
+                              replacement = "")
+    # print
+    cat("\n-----\n")
+    cat(ext, "|", paste0(good_files, collapse = ", "))
+    
+  }
+  
+  cat("\n-----")
+  
+}
+
+process_file_types()
+
+```
+
+The following function will summarize all of our libraries.
+
+```{r}
+
+process_libraries <- function(root = "/Users/alexanderdurbin/Google Drive/vt/STAT-git/asc_durbin/") {
+  
+  # get all files
+  my_files <- list.files(path = root, recursive = TRUE, full.names = FALSE)
+  # look for R/Rmd files - is this cheating?
+  my_pattern <- paste0("\\.R$")
+  r_files <- str_detect(string = my_files, pattern = my_pattern)
+  my_pattern <- paste0("\\.Rmd$")
+  rmd_files <- str_detect(string = my_files, pattern = my_pattern)
+  good_files <- c(my_files[r_files], my_files[rmd_files])
+  
+  # read all the files and grab the library statements
+  for (i in 1:length(good_files)) {
+    the_file <- good_files[i]
+    contents <- readLines(paste0(root, "/", the_file), warn = FALSE)
+    good_lines <- str_detect(string = contents, pattern = "library\\(")
+    if (sum(good_lines) == 0) {
+      next
+    } else{
+      good_lines <- contents[good_lines]
+    }
+    if (exists("libs")) {
+      libs <- c(libs, good_lines)
+    } else {
+      libs <- good_lines
+    }
+  }
+  
+  # remove beginning/trailing whitespace
+  libs <- str_trim(string = libs, side = "both")
+  # locate the library statement and remove  it from the front
+  locs <- str_locate(string = libs, pattern = "library\\(")[, 2]
+  str_sub(string = libs, start = 1, end = locs) <- ""
+  # locate end ) or , and remove it from the back
+  locs <- str_locate(string = libs, pattern = ",|\\)")[, 2]
+  str_sub(string = libs, start = locs, end = -1L) <- ""
+  
+  # read all the files and grab the require statements
+  for (i in 1:length(good_files)) {
+    the_file <- good_files[i]
+    contents <- readLines(paste0(root, "/", the_file), warn = FALSE)
+    good_lines <- str_detect(string = contents, pattern = "require\\(")
+    if (sum(good_lines) == 0) {
+      next
+    } else{
+      good_lines <- contents[good_lines]
+    }
+    if (exists("reqs")) {
+      reqs <- c(reqs, good_lines)
+    } else {
+      reqs <- good_lines
+    }
+  }
+  
+  # need to check if reqs still not exit for printing
+  if (exists("reqs")) {
+    # remove beginning/trailing whitespace
+    reqs <- str_trim(string = reqs, side = "both")
+    # locate the library statement and remove  it from the front
+    locs <- str_locate(string = reqs, pattern = "library\\(")[, 2]
+    str_sub(string = reqs, start = 1, end = locs) <- ""
+    # locate end ) or , and remove it from the back
+    locs <- str_locate(string = reqs, pattern = ",|\\)")[, 2]
+    str_sub(string = reqs, start = locs, end = -1L) <- ""
+    # combine for printing
+    libs <- c(libs, reqs)
+    libs <- unique(libs)
+    # printing
+    cat("\nlibraries | ", paste0(libs, collapse = ", "), "\n-----\n")
+  } else {
+    libs <- unique(libs)
+    # printing
+    cat("\nlibraries | ", paste0(libs, collapse = ", "), "\n-----\n")
+  }
+  
+}
+
+process_libraries()
+
+```
+
+We added the above to functions into `process.R` and execute them with the following bash script.
+
+```{r, eval=FALSE}
+
+#!/bin/bash
+Rscript -e "source('regex/process.R')"
+
+```
