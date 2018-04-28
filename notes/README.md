@@ -1,3 +1,3 @@
-# Alexander Durbin (ajd2@vt.edu) Notes Repository #
+# STAT6984 Notes Repository #
 
 For saving important notes.

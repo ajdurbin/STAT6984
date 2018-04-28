@@ -1,3 +1,3 @@
-# Alexander Durbin (ajd2@vt.edu) Homework Repository
+# STAT6984 Homework Repository
 
-`hwk1` will contain my solutions to the first assignment
+`hwk1` will contain my solutions to the first assignment, etc.

@@ -1,4 +1,4 @@
-# Alexander Durbin (ajd2@vt.edu) Homework 4 Repo
+# Homework 4 Repo
 
 This repository contains the solutions to the fourth homework assignment.
 `ghwk4_sol.Rmd` contains the writtens solutions, `spam_mc.sh` contains the bash

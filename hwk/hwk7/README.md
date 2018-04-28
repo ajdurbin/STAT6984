@@ -1,4 +1,4 @@
-# Alexander Durbin (ajd2@vt.edu) Final Project Repository
+# Final Project Repository
 
 This repository contains the solutions to the presentation homework
 assignments. It contains subdirectories for the source code for each problem
